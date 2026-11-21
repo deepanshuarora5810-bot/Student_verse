@@ -32,11 +32,9 @@ export const Navbar = () => {
     { label: 'Home', path: '/', icon: Compass },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: '3D Universe', path: '/universe', icon: Globe },
-    { label: 'Code Lab', path: '/code-lab', icon: Code },
     { label: 'Reverse AI', path: '/reverse-classroom', icon: GraduationCap },
     { label: 'Textbook 3D', path: '/living-textbook', icon: BookOpen },
     { label: 'Whiteboard', path: '/whiteboard', icon: PenTool },
-    { label: 'Intelligence', path: '/intelligence', icon: Brain },
     { label: 'AI Tutor', path: '/ai-tutor', icon: Bot },
   ];
 

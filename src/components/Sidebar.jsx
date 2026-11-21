@@ -25,11 +25,8 @@ export const Sidebar = ({ onQuickTaskClick }) => {
   const links = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: '3D Universe', path: '/universe', icon: Globe, highlight: true },
-    { label: 'Code Lab 3D', path: '/code-lab', icon: Code, highlight: true },
     { label: 'Reverse AI Student', path: '/reverse-classroom', icon: GraduationCap, highlight: true },
     { label: 'Living 3D Textbook', path: '/living-textbook', icon: BookOpen, highlight: true },
-    { label: 'My Learning World', path: '/my-world', icon: Compass, highlight: true },
-    { label: 'Intelligence Engine', path: '/intelligence', icon: Brain, highlight: true },
     { label: 'Teacher Whiteboard', path: '/whiteboard', icon: PenTool },
     { label: 'My Courses', path: '/courses', icon: BookOpen, badge: stats.enrolledCount },
     { label: 'Study Planner', path: '/planner', icon: Calendar, badge: stats.totalTasksCount - stats.completedTasksCount },

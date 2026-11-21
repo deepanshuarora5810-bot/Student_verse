@@ -193,36 +193,6 @@ export const Dashboard = () => {
         />
       </div>
 
-      {/* COGNITIVE WEAK CONCEPT WARNING BANNER */}
-      {stats.weakConceptsCount > 0 && (
-        <div className="p-4 sm:p-5 rounded-2xl glass-card border-rose-500/40 bg-gradient-to-r from-rose-950/40 via-[#070b22] to-amber-950/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
-              <ShieldAlert className="w-5 h-5 animate-pulse" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                <span>Cognitive Attention Alert</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                  {stats.weakConceptsCount} Concepts Require Practice
-                </span>
-              </h4>
-              <p className="text-xs text-slate-300 mt-0.5">
-                The Learning Intelligence Engine detected memory decay in Shor's Factorization & Red-Black Tree balances. Complete quick 5-min drills to preserve long-term retention.
-              </p>
-            </div>
-          </div>
-
-          <Link
-            to="/intelligence"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-rose-500 to-amber-600 hover:from-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.3)] transition-all transform active:scale-95 shrink-0 text-center"
-          >
-            <span>Review & Drill Now</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      )}
-
       {/* 3D SPATIAL & AI ECOSYSTEM LAUNCH MATRIX */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
@@ -263,30 +233,7 @@ export const Dashboard = () => {
             </span>
           </Link>
 
-          {/* Card 2: 3D Code Execution Lab */}
-          <Link
-            to="/code-lab"
-            className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-purple-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all" />
-            <div>
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-3 group-hover:scale-110 transition-transform">
-                <Code className="w-5 h-5" />
-              </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors flex items-center justify-between">
-                <span>Code Lab 3D</span>
-                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Step-by-step 3D Stack, Heap memory and recursion visualizer.
-              </p>
-            </div>
-            <span className="text-[10px] font-mono text-purple-400 mt-4 block">
-              Java & Python Debugger &rarr;
-            </span>
-          </Link>
-
-          {/* Card 3: Reverse Classroom AI */}
+          {/* Card 2: Reverse Classroom AI */}
           <Link
             to="/reverse-classroom"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-indigo-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
@@ -309,7 +256,7 @@ export const Dashboard = () => {
             </span>
           </Link>
 
-          {/* Card 4: Living 3D Textbook */}
+          {/* Card 3: Living 3D Textbook */}
           <Link
             to="/living-textbook"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-emerald-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
@@ -332,53 +279,7 @@ export const Dashboard = () => {
             </span>
           </Link>
 
-          {/* Card 5: Personal Learning World */}
-          <Link
-            to="/my-world"
-            className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-amber-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all" />
-            <div>
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3 group-hover:scale-110 transition-transform">
-                <Compass className="w-5 h-5" />
-              </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors flex items-center justify-between">
-                <span>My Learning World</span>
-                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Floating islands that unlock as you progress, with daily quests.
-              </p>
-            </div>
-            <span className="text-[10px] font-mono text-amber-400 mt-4 block">
-              {stats.unlockedBiomesCount} Biomes Unlocked &rarr;
-            </span>
-          </Link>
-
-          {/* Card 6: Intelligence Engine */}
-          <Link
-            to="/intelligence"
-            className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-cyan-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all" />
-            <div>
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-3 group-hover:scale-110 transition-transform">
-                <Brain className="w-5 h-5" />
-              </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors flex items-center justify-between">
-                <span>Intelligence Engine</span>
-                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Knowledge graph, retention curve, and mistake pattern audits.
-              </p>
-            </div>
-            <span className="text-[10px] font-mono text-cyan-400 mt-4 block">
-              Spaced Repetition &rarr;
-            </span>
-          </Link>
-
-          {/* Card 7: Teacher Whiteboard */}
+          {/* Card 4: Teacher Whiteboard */}
           <Link
             to="/whiteboard"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-teal-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"

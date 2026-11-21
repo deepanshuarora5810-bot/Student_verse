@@ -14,11 +14,8 @@ import { Achievements } from './pages/Achievements';
 import { AiTutor } from './pages/AiTutor';
 import { TeacherWhiteboard } from './pages/TeacherWhiteboard';
 import { Universe } from './pages/Universe';
-import { CodeExecutionLab } from './pages/CodeExecutionLab';
 import { ReverseClassroom } from './pages/ReverseClassroom';
 import { LivingTextbook } from './pages/LivingTextbook';
-import { LearningWorld } from './pages/LearningWorld';
-import { IntelligenceEngine } from './pages/IntelligenceEngine';
 import { AiCompanionModal } from './components/companion/AiCompanionModal';
 import { Modal } from './components/Modal';
 import { useStudent } from './context/StudentContext';
@@ -36,8 +33,7 @@ export const App = () => {
   const isHome = location.pathname === '/';
   const isWhiteboard = location.pathname === '/whiteboard';
   const isUniverse = location.pathname === '/universe';
-  const isWorld = location.pathname === '/my-world';
-  const isImmersiveFullPage = isWhiteboard || isUniverse || isWorld;
+  const isImmersiveFullPage = isWhiteboard || isUniverse;
 
   const handleQuickTaskSubmit = (e) => {
     e.preventDefault();
@@ -74,7 +70,6 @@ export const App = () => {
           <Routes>
             <Route path="/whiteboard" element={<TeacherWhiteboard />} />
             <Route path="/universe" element={<Universe />} />
-            <Route path="/my-world" element={<LearningWorld />} />
           </Routes>
         </main>
       ) : (
@@ -87,11 +82,8 @@ export const App = () => {
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/universe" element={<Universe />} />
-              <Route path="/code-lab" element={<CodeExecutionLab />} />
               <Route path="/reverse-classroom" element={<ReverseClassroom />} />
               <Route path="/living-textbook" element={<LivingTextbook />} />
-              <Route path="/my-world" element={<LearningWorld />} />
-              <Route path="/intelligence" element={<IntelligenceEngine />} />
               <Route path="/whiteboard" element={<TeacherWhiteboard />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/planner" element={<StudyPlanner />} />

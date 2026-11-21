@@ -107,11 +107,11 @@ export const Home = () => {
                 </Link>
 
                 <Link
-                  to="/code-lab"
+                  to="/reverse-classroom"
                   className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-purple-300 hover:text-white bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 backdrop-blur-md transition-all"
                 >
-                  <Code className="w-4 h-4 text-purple-400" />
-                  <span>3D Code Lab</span>
+                  <GraduationCap className="w-4 h-4 text-purple-400" />
+                  <span>Reverse AI Student</span>
                 </Link>
 
                 <Link
@@ -302,6 +302,20 @@ export const Home = () => {
           {filteredCourses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}
+        </div>
+
+        {/* Move to Next Page CTA */}
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl glass-card border-indigo-500/20 bg-[#060a1f]">
+          <div className="text-xs text-slate-300">
+            Displaying featured preview modules. Explore all quantum, AI, and systems disciplines with syllabus breakdowns.
+          </div>
+          <Link
+            to="/courses"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all shrink-0"
+          >
+            <span>Move to Next Page: Courses Catalog</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useStudent } from '../context/StudentContext';
-import { Star, Clock, BookOpen, Users, CheckCircle2, Play, Sparkles } from 'lucide-react';
+import { Star, Clock, BookOpen, Users, CheckCircle2, Play, Sparkles, ArrowRight } from 'lucide-react';
 import { Modal } from './Modal';
 
 export const CourseCard = ({ course }) => {
@@ -221,33 +222,52 @@ export const CourseCard = ({ course }) => {
               <p className="text-xs text-slate-300 leading-relaxed mb-3">
                 Interactive neural lecture stream ready. Connect your terminal or IDE workspace to begin exercise simulations.
               </p>
-              <button
-                onClick={() => {
-                  updateCourseProgress(course.id, Math.min(100, course.progress + 15));
-                  setActiveLesson(null);
-                }}
-                className="w-full py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition-all"
-              >
-                Mark Lesson as Studied (+15% Progress)
-              </button>
+              <div className="flex items-center gap-2 mt-3">
+                <button
+                  onClick={() => {
+                    updateCourseProgress(course.id, Math.min(100, course.progress + 15));
+                    const nextLesson = course.syllabus.find((l) => l.id === activeLesson.id + 1);
+                    if (nextLesson) {
+                      setActiveLesson(nextLesson);
+                    } else {
+                      setActiveLesson(null);
+                    }
+                  }}
+                  className="flex-1 py-2 px-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                >
+                  <span>Mark Studied & Move to Next Lesson</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-            <button
+          <div className="flex items-center justify-between gap-3 pt-4 border-t border-white/10">
+            <Link
+              to="/planner"
               onClick={() => setSyllabusOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 border border-white/10"
+              className="text-xs text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1"
             >
-              Close
-            </button>
-            {!course.enrolled && (
+              <span>Schedule on Planner Page</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+
+            <div className="flex items-center gap-2">
               <button
-                onClick={handleEnroll}
-                className="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan"
+                onClick={() => setSyllabusOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 border border-white/10"
               >
-                Enroll Now
+                Close
               </button>
-            )}
+              {!course.enrolled && (
+                <button
+                  onClick={handleEnroll}
+                  className="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan"
+                >
+                  Enroll Now
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </Modal>
