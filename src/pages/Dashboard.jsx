@@ -378,30 +378,7 @@ export const Dashboard = () => {
             </span>
           </Link>
 
-          {/* Card 7: Virtual 3D Classroom */}
-          <Link
-            to="/virtual-classroom"
-            className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-purple-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all" />
-            <div>
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-3 group-hover:scale-110 transition-transform">
-                <Video className="w-5 h-5" />
-              </div>
-              <h4 className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors flex items-center justify-between">
-                <span>Virtual 3D Classroom</span>
-                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </h4>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Spatial lecture amphitheater, synchronized slides & Q&A.
-              </p>
-            </div>
-            <span className="text-[10px] font-mono text-purple-400 mt-4 block">
-              Live Session Active &rarr;
-            </span>
-          </Link>
-
-          {/* Card 8: Teacher Whiteboard */}
+          {/* Card 7: Teacher Whiteboard */}
           <Link
             to="/whiteboard"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-teal-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"

@@ -19,7 +19,6 @@ import { ReverseClassroom } from './pages/ReverseClassroom';
 import { LivingTextbook } from './pages/LivingTextbook';
 import { LearningWorld } from './pages/LearningWorld';
 import { IntelligenceEngine } from './pages/IntelligenceEngine';
-import { VirtualClassroom } from './pages/VirtualClassroom';
 import { AiCompanionModal } from './components/companion/AiCompanionModal';
 import { Modal } from './components/Modal';
 import { useStudent } from './context/StudentContext';
@@ -93,7 +92,6 @@ export const App = () => {
               <Route path="/living-textbook" element={<LivingTextbook />} />
               <Route path="/my-world" element={<LearningWorld />} />
               <Route path="/intelligence" element={<IntelligenceEngine />} />
-              <Route path="/virtual-classroom" element={<VirtualClassroom />} />
               <Route path="/whiteboard" element={<TeacherWhiteboard />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/planner" element={<StudyPlanner />} />

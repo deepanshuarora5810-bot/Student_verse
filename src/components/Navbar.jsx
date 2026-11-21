@@ -37,7 +37,6 @@ export const Navbar = () => {
     { label: 'Textbook 3D', path: '/living-textbook', icon: BookOpen },
     { label: 'Whiteboard', path: '/whiteboard', icon: PenTool },
     { label: 'Intelligence', path: '/intelligence', icon: Brain },
-    { label: 'Classroom', path: '/virtual-classroom', icon: Video },
     { label: 'AI Tutor', path: '/ai-tutor', icon: Bot },
   ];
 

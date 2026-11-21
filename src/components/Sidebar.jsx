@@ -30,7 +30,6 @@ export const Sidebar = ({ onQuickTaskClick }) => {
     { label: 'Living 3D Textbook', path: '/living-textbook', icon: BookOpen, highlight: true },
     { label: 'My Learning World', path: '/my-world', icon: Compass, highlight: true },
     { label: 'Intelligence Engine', path: '/intelligence', icon: Brain, highlight: true },
-    { label: 'Virtual 3D Classroom', path: '/virtual-classroom', icon: Video, highlight: true },
     { label: 'Teacher Whiteboard', path: '/whiteboard', icon: PenTool },
     { label: 'My Courses', path: '/courses', icon: BookOpen, badge: stats.enrolledCount },
     { label: 'Study Planner', path: '/planner', icon: Calendar, badge: stats.totalTasksCount - stats.completedTasksCount },
