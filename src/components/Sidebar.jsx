@@ -3,25 +3,35 @@ import { NavLink } from 'react-router-dom';
 import { useStudent } from '../context/StudentContext';
 import {
   LayoutDashboard,
+  Globe,
+  Code,
+  GraduationCap,
   BookOpen,
+  Compass,
+  Brain,
+  Video,
+  PenTool,
   Calendar,
   CheckSquare,
   Trophy,
   User,
-  Zap,
-  Flame,
-  RotateCcw,
   PlusCircle,
-  Bot,
-  PenTool
+  Bot
 } from 'lucide-react';
 
 export const Sidebar = ({ onQuickTaskClick }) => {
-  const { student, stats, resetDemoData } = useStudent();
+  const { student, stats } = useStudent();
 
   const links = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'Live Whiteboard', path: '/whiteboard', icon: PenTool },
+    { label: '3D Universe', path: '/universe', icon: Globe, highlight: true },
+    { label: 'Code Lab 3D', path: '/code-lab', icon: Code, highlight: true },
+    { label: 'Reverse AI Student', path: '/reverse-classroom', icon: GraduationCap, highlight: true },
+    { label: 'Living 3D Textbook', path: '/living-textbook', icon: BookOpen, highlight: true },
+    { label: 'My Learning World', path: '/my-world', icon: Compass, highlight: true },
+    { label: 'Intelligence Engine', path: '/intelligence', icon: Brain, highlight: true },
+    { label: 'Virtual 3D Classroom', path: '/virtual-classroom', icon: Video, highlight: true },
+    { label: 'Teacher Whiteboard', path: '/whiteboard', icon: PenTool },
     { label: 'My Courses', path: '/courses', icon: BookOpen, badge: stats.enrolledCount },
     { label: 'Study Planner', path: '/planner', icon: Calendar, badge: stats.totalTasksCount - stats.completedTasksCount },
     { label: 'Assignments', path: '/assignments', icon: CheckSquare, badge: stats.pendingAssignmentsCount },
@@ -32,7 +42,7 @@ export const Sidebar = ({ onQuickTaskClick }) => {
 
   return (
     <aside className="hidden md:flex flex-col w-64 shrink-0 min-h-[calc(100vh-5rem)] border-r border-indigo-900/30 bg-[#050818]/60 backdrop-blur-xl p-4 justify-between">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5 overflow-y-auto max-h-[calc(100vh-6rem)] pr-1">
         
         {/* Quick User Snapshot Card */}
         <div className="p-3.5 rounded-2xl glass-card border-indigo-500/20 relative overflow-hidden group">
@@ -71,7 +81,7 @@ export const Sidebar = ({ onQuickTaskClick }) => {
         {onQuickTaskClick && (
           <button
             onClick={onQuickTaskClick}
-            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl font-medium text-xs text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all transform active:scale-95"
+            className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl font-medium text-xs text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all transform active:scale-95 shrink-0"
           >
             <PlusCircle className="w-4 h-4" />
             <span>New Study Task</span>
@@ -79,9 +89,9 @@ export const Sidebar = ({ onQuickTaskClick }) => {
         )}
 
         {/* Navigation Section */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 pb-4">
           <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 px-3 mb-1">
-            Navigation Portal
+            Spatial 3D & AI Ecosystem
           </span>
           {links.map((item) => {
             const Icon = item.icon;
@@ -90,19 +100,21 @@ export const Sidebar = ({ onQuickTaskClick }) => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                  `flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                     isActive
                       ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-[0_0_15px_-3px_rgba(6,182,212,0.25)]'
+                      : item.highlight
+                      ? 'text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
                       : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
                   }`
                 }
               >
-                <div className="flex items-center gap-2.5">
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Icon className="w-4 h-4 shrink-0 text-cyan-400" />
+                  <span className="truncate">{item.label}</span>
                 </div>
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
                     {item.badge}
                   </span>
                 )}
@@ -110,30 +122,6 @@ export const Sidebar = ({ onQuickTaskClick }) => {
             );
           })}
         </div>
-
-      </div>
-
-      {/* Footer controls inside sidebar */}
-      <div className="flex flex-col gap-3 pt-4 border-t border-indigo-900/30">
-        <div className="flex items-center justify-between px-2 text-xs font-mono text-slate-400">
-          <div className="flex items-center gap-1.5 text-amber-300">
-            <Flame className="w-4 h-4 text-amber-400" />
-            <span>{stats.streak}d Streak</span>
-          </div>
-          <div className="flex items-center gap-1 text-purple-300">
-            <Zap className="w-4 h-4 text-purple-400" />
-            <span>{stats.xp} XP</span>
-          </div>
-        </div>
-
-        <button
-          onClick={resetDemoData}
-          className="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-[11px] font-mono text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
-          title="Reset local storage data to initial demo state"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset Demo Data</span>
-        </button>
       </div>
     </aside>
   );

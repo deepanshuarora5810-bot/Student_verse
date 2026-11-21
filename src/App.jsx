@@ -13,6 +13,14 @@ import { Profile } from './pages/Profile';
 import { Achievements } from './pages/Achievements';
 import { AiTutor } from './pages/AiTutor';
 import { TeacherWhiteboard } from './pages/TeacherWhiteboard';
+import { Universe } from './pages/Universe';
+import { CodeExecutionLab } from './pages/CodeExecutionLab';
+import { ReverseClassroom } from './pages/ReverseClassroom';
+import { LivingTextbook } from './pages/LivingTextbook';
+import { LearningWorld } from './pages/LearningWorld';
+import { IntelligenceEngine } from './pages/IntelligenceEngine';
+import { VirtualClassroom } from './pages/VirtualClassroom';
+import { AiCompanionModal } from './components/companion/AiCompanionModal';
 import { Modal } from './components/Modal';
 import { useStudent } from './context/StudentContext';
 
@@ -28,6 +36,9 @@ export const App = () => {
 
   const isHome = location.pathname === '/';
   const isWhiteboard = location.pathname === '/whiteboard';
+  const isUniverse = location.pathname === '/universe';
+  const isWorld = location.pathname === '/my-world';
+  const isImmersiveFullPage = isWhiteboard || isUniverse || isWorld;
 
   const handleQuickTaskSubmit = (e) => {
     e.preventDefault();
@@ -59,10 +70,12 @@ export const App = () => {
             <Route path="/" element={<Home />} />
           </Routes>
         </main>
-      ) : isWhiteboard ? (
+      ) : isImmersiveFullPage ? (
         <main className="flex-1 w-full flex flex-col">
           <Routes>
             <Route path="/whiteboard" element={<TeacherWhiteboard />} />
+            <Route path="/universe" element={<Universe />} />
+            <Route path="/my-world" element={<LearningWorld />} />
           </Routes>
         </main>
       ) : (
@@ -74,6 +87,13 @@ export const App = () => {
           <main className="flex-1 min-w-0 flex flex-col">
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/universe" element={<Universe />} />
+              <Route path="/code-lab" element={<CodeExecutionLab />} />
+              <Route path="/reverse-classroom" element={<ReverseClassroom />} />
+              <Route path="/living-textbook" element={<LivingTextbook />} />
+              <Route path="/my-world" element={<LearningWorld />} />
+              <Route path="/intelligence" element={<IntelligenceEngine />} />
+              <Route path="/virtual-classroom" element={<VirtualClassroom />} />
               <Route path="/whiteboard" element={<TeacherWhiteboard />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/planner" element={<StudyPlanner />} />
@@ -87,8 +107,11 @@ export const App = () => {
         </div>
       )}
 
-      {/* Universal Footer (hidden in Whiteboard for maximal canvas view) */}
-      {!isWhiteboard && <Footer />}
+      {/* Universal Footer (hidden in immersive views for maximal canvas view) */}
+      {!isImmersiveFullPage && <Footer />}
+
+      {/* Global 3D AI Companion Dock & Modal */}
+      <AiCompanionModal />
 
       {/* Toast Notification Layer */}
       <ToastContainer />
@@ -98,72 +121,71 @@ export const App = () => {
         isOpen={quickTaskModalOpen}
         onClose={() => setQuickTaskModalOpen(false)}
         title="Quick Study Task"
-        subtitle="Quickly schedule a study session into your weekly timetable"
       >
         <form onSubmit={handleQuickTaskSubmit} className="flex flex-col gap-4">
           <div>
             <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase">
-              What are you focusing on?
+              Task Title
             </label>
             <input
               type="text"
               required
-              autoFocus
               value={quickTaskTitle}
               onChange={(e) => setQuickTaskTitle(e.target.value)}
-              placeholder="e.g. Master Bell State Entanglement Proofs"
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-cyan-400"
+              placeholder="e.g. Master Lie Algebras in 3D Universe"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/80 border border-indigo-900/40 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-sans"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase">
-                Discipline
+                Subject Sphere
               </label>
               <select
                 value={quickTaskSubject}
                 onChange={(e) => setQuickTaskSubject(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-cyan-400"
+                className="w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-indigo-900/40 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
               >
                 <option value="Quantum Computing">Quantum Computing</option>
-                <option value="Neural Architectures">Neural Architectures</option>
-                <option value="Hyperdimensional WebGL">Hyperdimensional WebGL</option>
-                <option value="Cybernetics & BCI">Cybernetics & BCI</option>
-                <option value="Zero-Knowledge Web3">Zero-Knowledge Web3</option>
-                <option value="Drone Swarms">Drone Swarms</option>
+                <option value="AI & Neural Systems">AI & Neural Systems</option>
+                <option value="Systems & Memory Architecture">Systems & Memory</option>
+                <option value="Applied Biophysics">Applied Biophysics</option>
               </select>
             </div>
-
             <div>
               <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase">
-                Day
+                Scheduled Day
               </label>
               <select
                 value={quickTaskDay}
                 onChange={(e) => setQuickTaskDay(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-cyan-400"
+                className="w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-indigo-900/40 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
               >
-                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((d) => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
               </select>
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+          <div className="flex justify-end gap-2 pt-3 border-t border-indigo-900/40">
             <button
               type="button"
               onClick={() => setQuickTaskModalOpen(false)}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all"
             >
-              Add to Timetable
+              Add to Study Schedule
             </button>
           </div>
         </form>
@@ -171,4 +193,6 @@ export const App = () => {
     </div>
   );
 };
+
+
 export default App;

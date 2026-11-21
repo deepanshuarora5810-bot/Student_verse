@@ -18,7 +18,12 @@ import {
   Award,
   ChevronRight,
   CheckCircle,
-  Play
+  Play,
+  Globe,
+  Code,
+  BookOpen,
+  Brain,
+  Video
 } from 'lucide-react';
 
 export const Home = () => {
@@ -91,22 +96,30 @@ export const Home = () => {
               </p>
 
               {/* Primary Action Buttons */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link
-                  to="/dashboard"
+                  to="/universe"
                   className="flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 shadow-neon-cyan transition-all transform active:scale-95 group"
                 >
-                  <Zap className="w-4 h-4 text-cyan-200 fill-cyan-200/40" />
-                  <span>Launch Student Portal</span>
+                  <Globe className="w-4 h-4 text-cyan-200" />
+                  <span>Enter 3D Universe</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
 
                 <Link
-                  to="/courses"
-                  className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm text-slate-200 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/40 backdrop-blur-md transition-all"
+                  to="/code-lab"
+                  className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-purple-300 hover:text-white bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 backdrop-blur-md transition-all"
                 >
-                  <Compass className="w-4 h-4 text-cyan-400" />
-                  <span>Explore Courses</span>
+                  <Code className="w-4 h-4 text-purple-400" />
+                  <span>3D Code Lab</span>
+                </Link>
+
+                <Link
+                  to="/dashboard"
+                  className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-sm text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                >
+                  <Zap className="w-4 h-4 text-cyan-400" />
+                  <span>Dashboard</span>
                 </Link>
               </div>
 

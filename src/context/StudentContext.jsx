@@ -9,7 +9,10 @@ import {
   INITIAL_ACHIEVEMENTS,
   INITIAL_ACTIVITIES,
   WEEKLY_ANALYTICS,
-  CATEGORY_RADAR
+  CATEGORY_RADAR,
+  LEARNING_WORLD_BIOMES,
+  KNOWLEDGE_GRAPH_DATA,
+  REVERSE_AI_QUESTIONS
 } from '../data/demoData';
 
 const StudentContext = createContext(null);
@@ -51,7 +54,37 @@ export const StudentProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : INITIAL_ACTIVITIES;
   });
 
+  const [biomes, setBiomes] = useState(() => {
+    const saved = localStorage.getItem('sv_biomes');
+    return saved ? JSON.parse(saved) : LEARNING_WORLD_BIOMES;
+  });
+
+  const [knowledgeGraph, setKnowledgeGraph] = useState(() => {
+    const saved = localStorage.getItem('sv_knowledge_graph');
+    return saved ? JSON.parse(saved) : KNOWLEDGE_GRAPH_DATA;
+  });
+
+  const [reverseQuestions, setReverseQuestions] = useState(() => {
+    const saved = localStorage.getItem('sv_reverse_questions');
+    return saved ? JSON.parse(saved) : REVERSE_AI_QUESTIONS;
+  });
+
+  const [companionOpen, setCompanionOpen] = useState(false);
+
   const [toasts, setToasts] = useState([]);
+
+  // Sync state changes with localStorage
+  useEffect(() => {
+    localStorage.setItem('sv_biomes', JSON.stringify(biomes));
+  }, [biomes]);
+
+  useEffect(() => {
+    localStorage.setItem('sv_knowledge_graph', JSON.stringify(knowledgeGraph));
+  }, [knowledgeGraph]);
+
+  useEffect(() => {
+    localStorage.setItem('sv_reverse_questions', JSON.stringify(reverseQuestions));
+  }, [reverseQuestions]);
 
   // Sync state changes with localStorage
   useEffect(() => {
@@ -271,6 +304,60 @@ export const StudentProvider = ({ children }) => {
     );
   };
 
+  // Learning World Actions
+  const completeMission = (biomeId, missionId) => {
+    let missionXP = 150;
+    let missionTitle = "Daily Mission";
+    setBiomes((prev) =>
+      prev.map((b) => {
+        if (b.id === biomeId) {
+          const updatedMissions = b.dailyMissions.map((m) => {
+            if (m.id === missionId && !m.completed) {
+              missionXP = m.xp;
+              missionTitle = m.title;
+              return { ...m, completed: true };
+            }
+            return m;
+          });
+          return { ...b, dailyMissions: updatedMissions };
+        }
+        return b;
+      })
+    );
+    addXP(missionXP);
+    addActivity(`Completed Mission: ${missionTitle}`, 'world', `+${missionXP} XP`);
+    addToast(`Mission Completed: ${missionTitle} (+${missionXP} XP)`, 'trophy', 'World Progress');
+  };
+
+  // Reverse Classroom Actions
+  const submitTeachingEvaluation = (questionId, score, evaluationText) => {
+    const earnedXP = Math.round(score * 2.5);
+    addXP(earnedXP);
+    addActivity(`Taught AI Student (Score: ${score}/100)`, 'ai', `+${earnedXP} XP`);
+    addToast(`AI Student Cortex-7 learned from your explanation! Mastery score: ${score}%`, 'success', 'Teaching Evaluated');
+  };
+
+  // Knowledge Graph & Retention Actions
+  const resolveWeakConcept = (conceptId) => {
+    setKnowledgeGraph((prev) => {
+      const updatedNodes = prev.nodes.map((n) => {
+        if (n.id === conceptId) {
+          return { ...n, mastery: Math.min(100, n.mastery + 20), status: n.mastery + 20 >= 80 ? 'mastered' : 'in-progress' };
+        }
+        return n;
+      });
+      const updatedWeak = prev.weakConcepts.filter((wc) => wc.id !== conceptId);
+      return { ...prev, nodes: updatedNodes, weakConcepts: updatedWeak };
+    });
+    addXP(120);
+    addToast(`Concept practice completed! Mastery retention increased.`, 'success', 'Concept Mastered');
+    addActivity('Strengthened weak concept through targeted practice', 'study', '+120 XP');
+  };
+
+  const toggleCompanion = (force) => {
+    setCompanionOpen((prev) => (typeof force === 'boolean' ? force : !prev));
+  };
+
   // Reset to initial demo data
   const resetDemoData = () => {
     setStudent(INITIAL_STUDENT);
@@ -280,6 +367,9 @@ export const StudentProvider = ({ children }) => {
     setAssignments(INITIAL_ASSIGNMENTS);
     setAchievements(INITIAL_ACHIEVEMENTS);
     setActivities(INITIAL_ACTIVITIES);
+    setBiomes(LEARNING_WORLD_BIOMES);
+    setKnowledgeGraph(KNOWLEDGE_GRAPH_DATA);
+    setReverseQuestions(REVERSE_AI_QUESTIONS);
     localStorage.clear();
     addToast('Default demo data has been restored.', 'info', 'Data Reset');
   };
@@ -303,6 +393,10 @@ export const StudentProvider = ({ children }) => {
         assignments,
         achievements,
         activities,
+        biomes,
+        knowledgeGraph,
+        reverseQuestions,
+        companionOpen,
         weeklyAnalytics: WEEKLY_ANALYTICS,
         categoryRadar: CATEGORY_RADAR,
         toasts,
@@ -319,6 +413,10 @@ export const StudentProvider = ({ children }) => {
         addAssignment,
         submitAssignment,
         claimAchievement,
+        completeMission,
+        submitTeachingEvaluation,
+        resolveWeakConcept,
+        toggleCompanion,
         resetDemoData,
         stats: {
           enrolledCount: enrolledCourses.length,
@@ -331,7 +429,9 @@ export const StudentProvider = ({ children }) => {
           studyHours: student.studyHours,
           streak: student.streak,
           xp: student.xp,
-          level: student.level
+          level: student.level,
+          weakConceptsCount: knowledgeGraph.weakConcepts.length,
+          unlockedBiomesCount: biomes.filter((b) => b.unlocked).length
         }
       }}
     >

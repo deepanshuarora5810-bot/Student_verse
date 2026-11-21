@@ -14,9 +14,13 @@ import {
   CheckSquare, 
   Trophy, 
   User,
-  ShieldCheck,
-  Bot,
-  PenTool
+  Globe,
+  Code,
+  GraduationCap,
+  Brain,
+  Video,
+  PenTool,
+  Bot
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -27,13 +31,14 @@ export const Navbar = () => {
   const navLinks = [
     { label: 'Home', path: '/', icon: Compass },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: '3D Universe', path: '/universe', icon: Globe },
+    { label: 'Code Lab', path: '/code-lab', icon: Code },
+    { label: 'Reverse AI', path: '/reverse-classroom', icon: GraduationCap },
+    { label: 'Textbook 3D', path: '/living-textbook', icon: BookOpen },
     { label: 'Whiteboard', path: '/whiteboard', icon: PenTool },
-    { label: 'Courses', path: '/courses', icon: BookOpen },
-    { label: 'Planner', path: '/planner', icon: Calendar },
-    { label: 'Assignments', path: '/assignments', icon: CheckSquare },
-    { label: 'Achievements', path: '/achievements', icon: Trophy },
+    { label: 'Intelligence', path: '/intelligence', icon: Brain },
+    { label: 'Classroom', path: '/virtual-classroom', icon: Video },
     { label: 'AI Tutor', path: '/ai-tutor', icon: Bot },
-    { label: 'Profile', path: '/profile', icon: User },
   ];
 
   const isActive = (path) => {
@@ -42,12 +47,12 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-40 w-full backdrop-blur-xl bg-[#040714]/80 border-b border-indigo-900/30 transition-all duration-300">
+    <nav className="sticky top-0 z-40 w-full backdrop-blur-xl bg-[#040714]/85 border-b border-indigo-900/30 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
           {/* Logo & Brand */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
             <div className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 p-[1.5px] transition-transform duration-300 group-hover:scale-105 group-hover:shadow-neon-cyan">
               <div className="w-full h-full bg-[#050818] rounded-[10px] flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-cyan-400 group-hover:rotate-12 transition-transform" />
@@ -61,27 +66,27 @@ export const Navbar = () => {
                 </span>
               </span>
               <span className="text-[10px] font-mono text-slate-400 -mt-1 hidden sm:inline tracking-widest">
-                NEURAL LEARNING PLATFORM
+                3D AI LEARNING ECOSYSTEM
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => {
+          <div className="hidden xl:flex items-center gap-1">
+            {navLinks.slice(0, 8).map((link) => {
               const active = isActive(link.path);
               const Icon = link.icon;
               return (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${
                     active
                       ? 'text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 shadow-[0_0_15px_-3px_rgba(6,182,212,0.3)]'
                       : 'text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
                   {link.label}
                 </Link>
               );
@@ -102,91 +107,57 @@ export const Navbar = () => {
               <span>{stats.xp.toLocaleString()} XP</span>
             </div>
 
-            {/* Level Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
-              <ShieldCheck className="w-4 h-4 text-cyan-400" />
-              <span>LVL {stats.level}</span>
-            </div>
-
-            {/* User Profile Avatar Link */}
+            {/* User Avatar & Level */}
             <Link
               to="/profile"
-              className="relative group p-0.5 rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500 hover:scale-105 transition-transform"
-              title="View Student Profile"
+              className="flex items-center gap-2.5 p-1 pl-2.5 pr-3 rounded-full glass-card border-indigo-500/30 hover:border-cyan-500/50 transition-all duration-300"
             >
+              <div className="flex flex-col text-right">
+                <span className="text-xs font-bold text-white leading-tight">{student.name}</span>
+                <span className="text-[10px] text-cyan-400 font-mono leading-tight">LVL {student.level}</span>
+              </div>
               <img
                 src={student.avatar}
                 alt={student.name}
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-[#050818]"
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-cyan-500/40"
               />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#050818]" />
             </Link>
           </div>
 
-          {/* Mobile Hamburger Button */}
+          {/* Mobile Menu Toggle Button */}
           <div className="flex lg:hidden items-center gap-2">
-            <Link
-              to="/profile"
-              className="p-0.5 rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500"
-            >
-              <img
-                src={student.avatar}
-                alt={student.name}
-                className="w-7 h-7 rounded-full object-cover"
-              />
-            </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white"
-              aria-label="Toggle Navigation Menu"
+              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 border border-indigo-900/40 transition-colors"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
-
         </div>
       </div>
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden backdrop-blur-2xl bg-[#070b20]/95 border-b border-indigo-900/40 px-4 pt-3 pb-6 transition-all duration-300 animate-in fade-in slide-in-from-top-4">
-          {/* Quick stats on mobile */}
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 text-xs">
-            <div className="flex items-center gap-1.5 text-amber-300">
-              <Flame className="w-4 h-4 text-amber-400" />
-              <span>{stats.streak} Days</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-purple-300">
-              <Zap className="w-4 h-4 text-purple-400" />
-              <span>{stats.xp.toLocaleString()} XP</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-cyan-300">
-              <ShieldCheck className="w-4 h-4 text-cyan-400" />
-              <span>Level {stats.level}</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            {navLinks.map((link) => {
-              const active = isActive(link.path);
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    active
-                      ? 'text-cyan-300 bg-cyan-500/15 border border-cyan-500/30'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
+        <div className="lg:hidden border-b border-indigo-900/30 bg-[#050818]/95 backdrop-blur-2xl px-4 pt-3 pb-6 flex flex-col gap-2">
+          {navLinks.map((link) => {
+            const active = isActive(link.path);
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium ${
+                  active
+                    ? 'text-cyan-300 bg-cyan-500/15 border border-cyan-500/30'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
       )}
     </nav>
