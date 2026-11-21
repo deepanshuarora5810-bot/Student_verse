@@ -5,9 +5,12 @@ import http from 'isomorphic-git/http/node';
 const projectDir = process.cwd();
 const token = process.env.GITHUB_TOKEN || process.argv[2];
 
-if (!token) {
-  console.error('ERROR: No GITHUB_TOKEN or Personal Access Token provided.');
-  console.error('Usage: GITHUB_TOKEN=your_pat node scripts/push.mjs OR node scripts/push.mjs your_pat');
+if (!token || token === 'YOUR_GITHUB_PAT' || token.startsWith('<')) {
+  console.error('\n⚠️  Please replace YOUR_GITHUB_PAT with your actual GitHub Personal Access Token.');
+  console.error('It usually looks like: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n');
+  console.error('1. Open https://github.com/settings/tokens');
+  console.error('2. Generate a token (classic) with "repo" permission checked.');
+  console.error('3. Run: node scripts/push.mjs ghp_yourActualTokenHere\n');
   process.exit(1);
 }
 
@@ -23,12 +26,12 @@ async function run() {
       force: true,
       onAuth: () => ({
         username: token,
-        password: ''
+        password: token
       })
     });
-    console.log('Push succeeded!', JSON.stringify(result, null, 2));
+    console.log('✅ Push succeeded!', JSON.stringify(result, null, 2));
   } catch (error) {
-    console.error('Push error:', error.message || error);
+    console.error('❌ Push error:', error.message || error);
     process.exit(1);
   }
 }
