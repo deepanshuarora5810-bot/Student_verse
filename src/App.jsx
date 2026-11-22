@@ -16,6 +16,7 @@ import { TeacherWhiteboard } from './pages/TeacherWhiteboard';
 import { Universe } from './pages/Universe';
 import { ReverseClassroom } from './pages/ReverseClassroom';
 import { LivingTextbook } from './pages/LivingTextbook';
+import { ProductivityHub } from './pages/ProductivityHub';
 import { AiCompanionModal } from './components/companion/AiCompanionModal';
 import { Modal } from './components/Modal';
 import { useStudent } from './context/StudentContext';
@@ -81,6 +82,7 @@ export const App = () => {
           <main className="flex-1 min-w-0 flex flex-col">
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/productivity" element={<ProductivityHub />} />
               <Route path="/universe" element={<Universe />} />
               <Route path="/reverse-classroom" element={<ReverseClassroom />} />
               <Route path="/living-textbook" element={<LivingTextbook />} />

@@ -235,10 +235,18 @@ export const INITIAL_TASKS = [
     day: "Monday",
     time: "14:00 - 16:30",
     duration: "2.5h",
+    estimatedHours: 2.5,
+    dueDate: "2026-11-23",
     priority: "High",
+    risk: "Low",
     completed: true,
     tag: "Coding",
-    notes: "Review eigensolver matrix convergence graphs before pushing."
+    notes: "Review eigensolver matrix convergence graphs before pushing.",
+    subtasks: [
+      { id: "sub-1-1", title: "Formulate Hamiltonian Pauli matrices", completed: true },
+      { id: "sub-1-2", title: "Configure Qiskit Statevector simulator", completed: true },
+      { id: "sub-1-3", title: "Benchmark ground state eigenvalue convergence", completed: true }
+    ]
   },
   {
     id: "tsk-2",
@@ -247,10 +255,18 @@ export const INITIAL_TASKS = [
     day: "Tuesday",
     time: "10:00 - 12:30",
     duration: "2.5h",
+    estimatedHours: 2.5,
+    dueDate: "2026-11-24",
     priority: "High",
+    risk: "Medium",
     completed: true,
     tag: "Experiment",
-    notes: "Set rank=16, alpha=32, target modules [q_proj, v_proj]."
+    notes: "Set rank=16, alpha=32, target modules [q_proj, v_proj].",
+    subtasks: [
+      { id: "sub-2-1", title: "Prepare tokenized instruction dataset", completed: true },
+      { id: "sub-2-2", title: "Attach low-rank adapter matrices to attention weights", completed: true },
+      { id: "sub-2-3", title: "Verify gradient checkpointing memory reduction", completed: true }
+    ]
   },
   {
     id: "tsk-3",
@@ -259,10 +275,18 @@ export const INITIAL_TASKS = [
     day: "Wednesday",
     time: "15:00 - 18:00",
     duration: "3.0h",
-    priority: "Medium",
+    estimatedHours: 3.0,
+    dueDate: "2026-11-21", // Past date -> Overdue
+    priority: "High",
+    risk: "High",
     completed: false,
     tag: "Lab",
-    notes: "Optimize distance estimator function to prevent GPU frame drops."
+    notes: "Optimize distance estimator function to prevent GPU frame drops.",
+    subtasks: [
+      { id: "sub-3-1", title: "Construct signed distance function (SDF) sphere union", completed: true },
+      { id: "sub-3-2", title: "Integrate 3D Simplex noise volumetric perturbation", completed: false },
+      { id: "sub-3-3", title: "Compute analytical normal vector gradient step", completed: false }
+    ]
   },
   {
     id: "tsk-4",
@@ -271,10 +295,17 @@ export const INITIAL_TASKS = [
     day: "Thursday",
     time: "16:00 - 17:30",
     duration: "1.5h",
+    estimatedHours: 1.5,
+    dueDate: "2026-11-26",
     priority: "Low",
+    risk: "Low",
     completed: false,
     tag: "Group",
-    notes: "Prepare 5-minute explanation of Quantum Fourier Transform step."
+    notes: "Prepare 5-minute explanation of Quantum Fourier Transform step.",
+    subtasks: [
+      { id: "sub-4-1", title: "Review modular exponentiation period finding", completed: true },
+      { id: "sub-4-2", title: "Summarize discrete logarithm speedups", completed: false }
+    ]
   },
   {
     id: "tsk-5",
@@ -283,10 +314,18 @@ export const INITIAL_TASKS = [
     day: "Friday",
     time: "11:00 - 13:00",
     duration: "2.0h",
+    estimatedHours: 2.0,
+    dueDate: "2026-11-20", // Past date -> Overdue
     priority: "Medium",
+    risk: "High",
     completed: false,
     tag: "Writing",
-    notes: "Include Butterworth filter frequency response graphs."
+    notes: "Include Butterworth filter frequency response graphs.",
+    subtasks: [
+      { id: "sub-5-1", title: "Plot FFT power spectrum before/after notch filtering", completed: true },
+      { id: "sub-5-2", title: "Calculate Signal-to-Noise Ratio (SNR) improvements", completed: false },
+      { id: "sub-5-3", title: "Write methodology and discussion sections", completed: false }
+    ]
   },
   {
     id: "tsk-6",
@@ -295,10 +334,18 @@ export const INITIAL_TASKS = [
     day: "Saturday",
     time: "09:00 - 17:00",
     duration: "8.0h",
+    estimatedHours: 8.0,
+    dueDate: "2026-11-28",
     priority: "High",
+    risk: "Medium",
     completed: false,
     tag: "Competition",
-    notes: "Coordinate drone tele-op with team in virtual sim room #4."
+    notes: "Coordinate drone tele-op with team in virtual sim room #4.",
+    subtasks: [
+      { id: "sub-6-1", title: "Calibrate ROS2 simulation coordinate frames", completed: false },
+      { id: "sub-6-2", title: "Tune collision avoidance repulsive potential fields", completed: false },
+      { id: "sub-6-3", title: "Execute multi-agent autonomous perimeter patrol", completed: false }
+    ]
   }
 ];
 
@@ -1068,3 +1115,222 @@ export const CLASSROOM_LECTURE = {
     { id: "st-5", name: "Kenji Sato", seat: "Third Row, Left", handRaised: false, active: true }
   ]
 };
+
+// ==========================================
+// 8. ADVANCED TASK MANAGER & PRODUCTIVITY SUITE DATA
+// ==========================================
+
+export const INITIAL_EXAMS = [
+  {
+    id: "exm-1",
+    title: "Quantum Computation & Logic Final Exam",
+    subject: "Quantum Computing",
+    date: "2026-11-25",
+    time: "09:00 - 12:00",
+    venue: "Hall B // Online Neural Proctored",
+    readinessScore: 82,
+    urgency: "High",
+    daysLeft: 3,
+    topics: [
+      { id: "top-1", name: "Shor's Factoring & QFT", weight: "25%", completed: true, mastery: 85 },
+      { id: "top-2", name: "Grover Search Oracle & Amplification", weight: "25%", completed: true, mastery: 90 },
+      { id: "top-3", name: "Variational Quantum Eigensolver (VQE)", weight: "20%", completed: true, mastery: 80 },
+      { id: "top-4", name: "Quantum Error Correction (Shor 9-qubit code)", weight: "15%", completed: false, mastery: 45 },
+      { id: "top-5", name: "Hardware Noise & Decoherence Mitigation", weight: "15%", completed: false, mastery: 50 }
+    ]
+  },
+  {
+    id: "exm-2",
+    title: "Neural Transformers & Attention Mechanics Midterm",
+    subject: "Neural Architectures",
+    date: "2026-11-28",
+    time: "14:00 - 17:00",
+    venue: "Sim Lab 4",
+    readinessScore: 68,
+    urgency: "Medium",
+    daysLeft: 6,
+    topics: [
+      { id: "top-6", name: "Scaled Dot-Product & Multi-Head Attention", weight: "30%", completed: true, mastery: 92 },
+      { id: "top-7", name: "Rotary Embeddings (RoPE) & Positional Math", weight: "25%", completed: true, mastery: 78 },
+      { id: "top-8", name: "LoRA / QLoRA Parameter Efficient Tuning", weight: "25%", completed: false, mastery: 40 },
+      { id: "top-9", name: "FlashAttention GPU Memory Optimization", weight: "20%", completed: false, mastery: 35 }
+    ]
+  },
+  {
+    id: "exm-3",
+    title: "WebGL 3D Shaders & Raymarching Evaluation",
+    subject: "Hyperdimensional WebGL",
+    date: "2026-12-05",
+    time: "11:00 - 13:00",
+    venue: "Graphics Lab Alpha",
+    readinessScore: 91,
+    urgency: "Low",
+    daysLeft: 13,
+    topics: [
+      { id: "top-10", name: "GLSL Pipeline & Fragment Math", weight: "30%", completed: true, mastery: 95 },
+      { id: "top-11", name: "Signed Distance Functions (SDFs)", weight: "35%", completed: true, mastery: 90 },
+      { id: "top-12", name: "Volumetric Lighting & Post-Processing", weight: "35%", completed: true, mastery: 88 }
+    ]
+  }
+];
+
+export const INITIAL_REVISIONS = [
+  {
+    id: "rev-1",
+    topic: "Quantum Superposition & Bell State Equations",
+    subject: "Quantum Computing",
+    intervalStage: 3, // 1d, 3d, 7d, 14d, 30d
+    intervalName: "7 Days (Stage 3)",
+    nextReviewDate: "2026-11-22", // Today
+    lastReviewed: "2026-11-15",
+    mastery: 85,
+    dueToday: true,
+    repetitions: 3,
+    keySummary: "|Φ⁺⟩ = (|00⟩ + |11⟩) / √2; Maximally entangled Bell basis states."
+  },
+  {
+    id: "rev-2",
+    topic: "Multi-Head Attention Query-Key-Value Scaling Math",
+    subject: "Neural Architectures",
+    intervalStage: 2,
+    intervalName: "3 Days (Stage 2)",
+    nextReviewDate: "2026-11-22", // Today
+    lastReviewed: "2026-11-19",
+    mastery: 72,
+    dueToday: true,
+    repetitions: 2,
+    keySummary: "Softmax((Q * K^T) / sqrt(d_k)) * V; prevents gradient vanishing in deep layers."
+  },
+  {
+    id: "rev-3",
+    topic: "Raymarching Sphere Tracing & Normal Vector Computation",
+    subject: "Hyperdimensional WebGL",
+    intervalStage: 4,
+    intervalName: "14 Days (Stage 4)",
+    nextReviewDate: "2026-11-26",
+    lastReviewed: "2026-11-12",
+    mastery: 92,
+    dueToday: false,
+    repetitions: 4,
+    keySummary: "vec3 n = normalize(vec3(map(p+e.xyy)-map(p-e.xyy), ...)); central differences."
+  },
+  {
+    id: "rev-4",
+    topic: "Elliptic Curve Discrete Logarithm Problem (ECDLP)",
+    subject: "Zero-Knowledge Cryptography",
+    intervalStage: 1,
+    intervalName: "1 Day (Stage 1)",
+    nextReviewDate: "2026-11-22", // Today
+    lastReviewed: "2026-11-21",
+    mastery: 60,
+    dueToday: true,
+    repetitions: 1,
+    keySummary: "Finding k such that Q = k * P on y^2 = x^3 + ax + b is computationally infeasible."
+  },
+  {
+    id: "rev-5",
+    topic: "P300 Brain Wave Detection & Event-Related Potentials",
+    subject: "Neural UX",
+    intervalStage: 3,
+    intervalName: "7 Days (Stage 3)",
+    nextReviewDate: "2026-11-24",
+    lastReviewed: "2026-11-17",
+    mastery: 78,
+    dueToday: false,
+    repetitions: 3,
+    keySummary: "Positive deflection at ~300ms post-infrequent sensory stimulus in parietal cortex."
+  }
+];
+
+export const INITIAL_PARTNERS = [
+  {
+    id: "ptn-1",
+    name: "Maya Lin",
+    handle: "@mayalin_neuro",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+    major: "Computational Neuroscience",
+    streak: 18,
+    studyHoursThisWeek: 26.4,
+    status: "Deep Focus Mode",
+    activeNow: true,
+    nudgeSent: false,
+    privacyShareHours: true,
+    privacyShareStreak: true,
+    sharedGoals: [
+      { id: "sg-1", title: "Complete 15 Focus Hours by Friday", target: 15, currentAlex: 14.5, currentPartner: 15.0, completed: false },
+      { id: "sg-2", title: "Review 10 Spaced Topics", target: 10, currentAlex: 8, currentPartner: 10, completed: false }
+    ]
+  },
+  {
+    id: "ptn-2",
+    name: "Kenji Sato",
+    handle: "@kenji_quantum",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
+    major: "Quantum Information Theory",
+    streak: 12,
+    studyHoursThisWeek: 21.0,
+    status: "Idle",
+    activeNow: false,
+    nudgeSent: false,
+    privacyShareHours: true,
+    privacyShareStreak: true,
+    sharedGoals: [
+      { id: "sg-3", title: "Solve Grover Algorithm Exercises", target: 5, currentAlex: 4, currentPartner: 5, completed: false }
+    ]
+  }
+];
+
+export const INITIAL_DISTRACTIONS = [
+  { id: "dis-1", reason: "Smartphone Notifications & Messages", occurrences: 14, impact: "High", avgMinutesLost: 18, tip: "Enable iOS / Android Work Focus filter during study sprints." },
+  { id: "dis-2", reason: "Social Media & Algorithmic Feeds", occurrences: 9, impact: "High", avgMinutesLost: 24, tip: "Use website blocker extensions on desktop browser." },
+  { id: "dis-3", reason: "Cognitive Fatigue & Mind Wandering", occurrences: 8, impact: "Medium", avgMinutesLost: 12, tip: "Take brisk 5-minute hydration walk every 50 minutes." },
+  { id: "dis-4", reason: "Irrelevant Wikipedia / YouTube Rabbit Holes", occurrences: 5, impact: "Medium", avgMinutesLost: 15, tip: "Keep a quick 'Parked Questions' notepad instead of browsing instantly." },
+  { id: "dis-5", reason: "Ambient Room Noise", occurrences: 3, impact: "Low", avgMinutesLost: 7, tip: "Activate binaural beats or brown noise audio filter." }
+];
+
+export const HOURLY_PRODUCTIVITY_PATTERN = [
+  { hour: "06:00", productivity: 35, focusMinutes: 20, period: "Early Morning" },
+  { hour: "08:00", productivity: 75, focusMinutes: 45, period: "Morning" },
+  { hour: "10:00", productivity: 95, focusMinutes: 58, period: "Peak Focus (Morning)" },
+  { hour: "12:00", productivity: 60, focusMinutes: 30, period: "Midday" },
+  { hour: "14:00", productivity: 80, focusMinutes: 48, period: "Afternoon" },
+  { hour: "16:00", productivity: 92, focusMinutes: 55, period: "Peak Focus (Afternoon)" },
+  { hour: "18:00", productivity: 65, focusMinutes: 35, period: "Early Evening" },
+  { hour: "20:00", productivity: 85, focusMinutes: 50, period: "Evening" },
+  { hour: "22:00", productivity: 45, focusMinutes: 25, period: "Late Night" }
+];
+
+export const WORKLOAD_HEATMAP_DATA = [
+  // 4 Weeks matrix: 28 days
+  { date: "2026-10-26", dayName: "Mon", tasks: 2, completed: 2, overdue: 0, hours: 3.5, intensity: 2 },
+  { date: "2026-10-27", dayName: "Tue", tasks: 3, completed: 3, overdue: 0, hours: 4.5, intensity: 3 },
+  { date: "2026-10-28", dayName: "Wed", tasks: 4, completed: 4, overdue: 0, hours: 5.5, intensity: 4 },
+  { date: "2026-10-29", dayName: "Thu", tasks: 2, completed: 2, overdue: 0, hours: 3.0, intensity: 2 },
+  { date: "2026-10-30", dayName: "Fri", tasks: 3, completed: 3, overdue: 0, hours: 4.0, intensity: 3 },
+  { date: "2026-10-31", dayName: "Sat", tasks: 5, completed: 5, overdue: 0, hours: 7.0, intensity: 4 },
+  { date: "2026-11-01", dayName: "Sun", tasks: 2, completed: 2, overdue: 0, hours: 3.0, intensity: 2 },
+
+  { date: "2026-11-02", dayName: "Mon", tasks: 3, completed: 3, overdue: 0, hours: 4.2, intensity: 3 },
+  { date: "2026-11-03", dayName: "Tue", tasks: 4, completed: 4, overdue: 0, hours: 5.8, intensity: 4 },
+  { date: "2026-11-04", dayName: "Wed", tasks: 2, completed: 2, overdue: 0, hours: 3.2, intensity: 2 },
+  { date: "2026-11-05", dayName: "Thu", tasks: 3, completed: 3, overdue: 0, hours: 4.0, intensity: 3 },
+  { date: "2026-11-06", dayName: "Fri", tasks: 3, completed: 3, overdue: 0, hours: 4.5, intensity: 3 },
+  { date: "2026-11-07", dayName: "Sat", tasks: 6, completed: 6, overdue: 0, hours: 8.0, intensity: 4 },
+  { date: "2026-11-08", dayName: "Sun", tasks: 1, completed: 1, overdue: 0, hours: 2.0, intensity: 1 },
+
+  { date: "2026-11-09", dayName: "Mon", tasks: 3, completed: 3, overdue: 0, hours: 4.5, intensity: 3 },
+  { date: "2026-11-10", dayName: "Tue", tasks: 4, completed: 4, overdue: 0, hours: 5.2, intensity: 4 },
+  { date: "2026-11-11", dayName: "Wed", tasks: 3, completed: 3, overdue: 0, hours: 4.0, intensity: 3 },
+  { date: "2026-11-12", dayName: "Thu", tasks: 2, completed: 2, overdue: 0, hours: 3.0, intensity: 2 },
+  { date: "2026-11-13", dayName: "Fri", tasks: 4, completed: 4, overdue: 0, hours: 5.0, intensity: 4 },
+  { date: "2026-11-14", dayName: "Sat", tasks: 5, completed: 5, overdue: 0, hours: 7.2, intensity: 4 },
+  { date: "2026-11-15", dayName: "Sun", tasks: 2, completed: 2, overdue: 0, hours: 2.5, intensity: 2 },
+
+  { date: "2026-11-16", dayName: "Mon", tasks: 3, completed: 3, overdue: 0, hours: 4.0, intensity: 3 },
+  { date: "2026-11-17", dayName: "Tue", tasks: 4, completed: 4, overdue: 0, hours: 5.5, intensity: 4 },
+  { date: "2026-11-18", dayName: "Wed", tasks: 2, completed: 2, overdue: 0, hours: 3.0, intensity: 2 },
+  { date: "2026-11-19", dayName: "Thu", tasks: 3, completed: 3, overdue: 0, hours: 4.2, intensity: 3 },
+  { date: "2026-11-20", dayName: "Fri", tasks: 4, completed: 2, overdue: 1, hours: 4.8, intensity: 4 }, // Has overdue
+  { date: "2026-11-21", dayName: "Sat", tasks: 5, completed: 2, overdue: 1, hours: 6.5, intensity: 4 }, // Has overdue
+  { date: "2026-11-22", dayName: "Sun (Today)", tasks: 3, completed: 1, overdue: 0, hours: 3.5, intensity: 2 }
+];

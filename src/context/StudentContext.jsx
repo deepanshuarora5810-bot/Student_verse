@@ -12,7 +12,13 @@ import {
   CATEGORY_RADAR,
   LEARNING_WORLD_BIOMES,
   KNOWLEDGE_GRAPH_DATA,
-  REVERSE_AI_QUESTIONS
+  REVERSE_AI_QUESTIONS,
+  INITIAL_EXAMS,
+  INITIAL_REVISIONS,
+  INITIAL_PARTNERS,
+  INITIAL_DISTRACTIONS,
+  HOURLY_PRODUCTIVITY_PATTERN,
+  WORKLOAD_HEATMAP_DATA
 } from '../data/demoData';
 
 const StudentContext = createContext(null);
@@ -71,9 +77,57 @@ export const StudentProvider = ({ children }) => {
 
   const [companionOpen, setCompanionOpen] = useState(false);
 
+  // Advanced Student Task Manager & Productivity Suites
+  const [exams, setExams] = useState(() => {
+    const saved = localStorage.getItem('sv_exams');
+    return saved ? JSON.parse(saved) : INITIAL_EXAMS;
+  });
+
+  const [revisions, setRevisions] = useState(() => {
+    const saved = localStorage.getItem('sv_revisions');
+    return saved ? JSON.parse(saved) : INITIAL_REVISIONS;
+  });
+
+  const [partners, setPartners] = useState(() => {
+    const saved = localStorage.getItem('sv_partners');
+    return saved ? JSON.parse(saved) : INITIAL_PARTNERS;
+  });
+
+  const [distractions, setDistractions] = useState(() => {
+    const saved = localStorage.getItem('sv_distractions');
+    return saved ? JSON.parse(saved) : INITIAL_DISTRACTIONS;
+  });
+
+  const [emergencyPlan, setEmergencyPlan] = useState(() => {
+    const saved = localStorage.getItem('sv_emergency_plan');
+    return saved ? JSON.parse(saved) : null;
+  });
+
   const [toasts, setToasts] = useState([]);
 
   // Sync state changes with localStorage
+  useEffect(() => {
+    localStorage.setItem('sv_exams', JSON.stringify(exams));
+  }, [exams]);
+
+  useEffect(() => {
+    localStorage.setItem('sv_revisions', JSON.stringify(revisions));
+  }, [revisions]);
+
+  useEffect(() => {
+    localStorage.setItem('sv_partners', JSON.stringify(partners));
+  }, [partners]);
+
+  useEffect(() => {
+    localStorage.setItem('sv_distractions', JSON.stringify(distractions));
+  }, [distractions]);
+
+  useEffect(() => {
+    if (emergencyPlan) {
+      localStorage.setItem('sv_emergency_plan', JSON.stringify(emergencyPlan));
+    }
+  }, [emergencyPlan]);
+
   useEffect(() => {
     localStorage.setItem('sv_biomes', JSON.stringify(biomes));
   }, [biomes]);
@@ -250,6 +304,295 @@ export const StudentProvider = ({ children }) => {
     );
   };
 
+  const toggleSubtask = (taskId, subtaskId) => {
+    setTasks((prev) =>
+      prev.map((t) => {
+        if (t.id === taskId && t.subtasks) {
+          const updatedSubtasks = t.subtasks.map((st) =>
+            st.id === subtaskId ? { ...st, completed: !st.completed } : st
+          );
+          const allDone = updatedSubtasks.every((st) => st.completed);
+          if (allDone && !t.completed) {
+            confetti({ particleCount: 30, spread: 45 });
+            addToast(`All subtasks finished for "${t.title}"!`, 'success', 'Milestone Complete');
+            addXP(20);
+          }
+          return { ...t, subtasks: updatedSubtasks, completed: allDone ? true : t.completed };
+        }
+        return t;
+      })
+    );
+  };
+
+  const breakdownTaskWithAI = async (taskId, taskTitle, subject, context = "") => {
+    try {
+      const resp = await fetch('http://localhost:8000/api/tasks/breakdown', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: taskTitle,
+          subject: subject || 'General',
+          description: context,
+          target_hours: 6.0
+        })
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.subtasks && data.subtasks.length > 0) {
+          setTasks((prev) =>
+            prev.map((t) =>
+              t.id === taskId
+                ? {
+                    ...t,
+                    subtasks: data.subtasks,
+                    breakdownModel: data.model,
+                    estimatedHours: data.total_estimated_hours
+                  }
+                : t
+            )
+          );
+          addToast(`AI broken down "${taskTitle}" into ${data.subtasks.length} actionable subtasks (${data.model})`, 'success', 'Task Decomposed');
+          return data.subtasks;
+        }
+      }
+    } catch (e) {
+      console.warn('Backend breakdown unavailable, applying local heuristic breakdown engine:', e);
+    }
+
+    // High quality local heuristic breakdown fallback
+    const fallbackSubtasks = [
+      { id: `sub-${Date.now()}-1`, title: "Conceptual Blueprint & Architecture Setup", completed: false, estimated_hours: 1.5, priority: "High" },
+      { id: `sub-${Date.now()}-2`, title: "Core Implementation / Derivation Phase", completed: false, estimated_hours: 2.5, priority: "High" },
+      { id: `sub-${Date.now()}-3`, title: "Rigorous Verification & Test Harness", completed: false, estimated_hours: 1.5, priority: "Medium" },
+      { id: `sub-${Date.now()}-4`, title: "Documentation, LaTeX Proofs & Clean Package", completed: false, estimated_hours: 1.0, priority: "Low" }
+    ];
+
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === taskId
+          ? {
+              ...t,
+              subtasks: fallbackSubtasks,
+              breakdownModel: "Heuristic AI Engine (Offline Fallback)",
+              estimatedHours: 6.5
+            }
+          : t
+      )
+    );
+    addToast(`Generated 4 modular subtasks for "${taskTitle}".`, 'info', 'AI Breakdown Applied');
+    return fallbackSubtasks;
+  };
+
+  const acceptRecoveryPlan = (planItems) => {
+    if (!planItems || !planItems.length) return;
+    setTasks((prev) =>
+      prev.map((t) => {
+        const match = planItems.find((p) => p.task_id === t.id);
+        if (match) {
+          return {
+            ...t,
+            day: match.suggested_day || t.day,
+            time: match.suggested_time || t.time,
+            risk: 'Low',
+            notes: `${t.notes || ''} [Rescheduled via Missed Task Recovery System]`
+          };
+        }
+        return t;
+      })
+    );
+    confetti({ particleCount: 50, spread: 60 });
+    addToast(`Successfully rescheduled ${planItems.length} overdue tasks with collision-free slots!`, 'success', 'Recovery Engaged');
+    addActivity(`Applied automated Missed Task Recovery plan`, 'study', '+50 XP');
+    addXP(50);
+  };
+
+  // Exam Readiness Actions
+  const addExam = (examData) => {
+    const newExm = {
+      id: `exm-${Date.now()}`,
+      readinessScore: 60,
+      daysLeft: 7,
+      topics: [],
+      ...examData
+    };
+    setExams((prev) => [newExm, ...prev]);
+    addToast(`Exam "${newExm.title}" registered with readiness tracking.`, 'info', 'Exam Added');
+  };
+
+  const toggleExamTopic = (examId, topicId) => {
+    setExams((prev) =>
+      prev.map((exm) => {
+        if (exm.id === examId) {
+          const updatedTopics = exm.topics.map((top) =>
+            top.id === topicId ? { ...top, completed: !top.completed, mastery: !top.completed ? 95 : 45 } : top
+          );
+          const completedCount = updatedTopics.filter((t) => t.completed).length;
+          const newReadiness = updatedTopics.length
+            ? Math.round((completedCount / updatedTopics.length) * 100)
+            : 0;
+          if (completedCount === updatedTopics.length) {
+            confetti({ particleCount: 60, spread: 70 });
+            addToast(`100% Exam Readiness achieved for ${exm.subject}!`, 'trophy', 'Exam Ready');
+            addXP(150);
+          }
+          return { ...exm, topics: updatedTopics, readinessScore: newReadiness };
+        }
+        return exm;
+      })
+    );
+  };
+
+  // Revision Memory Actions (Spaced Repetition)
+  const reviewSpacedTopic = (topicId) => {
+    setRevisions((prev) =>
+      prev.map((rev) => {
+        if (rev.id === topicId) {
+          const stageNames = ["1 Day (Stage 1)", "3 Days (Stage 2)", "7 Days (Stage 3)", "14 Days (Stage 4)", "30 Days (Stage 5)"];
+          const nextStage = Math.min(5, rev.intervalStage + 1);
+          const nextDays = nextStage === 1 ? 1 : nextStage === 2 ? 3 : nextStage === 3 ? 7 : nextStage === 4 ? 14 : 30;
+          const futureDate = new Date();
+          futureDate.setDate(futureDate.getDate() + nextDays);
+          const dateStr = futureDate.toISOString().split('T')[0];
+
+          confetti({ particleCount: 35, spread: 50 });
+          addToast(`Spaced review completed for "${rev.topic}"! Next review in ${nextDays} days.`, 'success', 'Retention Synced');
+          addXP(30);
+          addActivity(`Completed spaced review: ${rev.topic}`, 'study', '+30 XP');
+
+          return {
+            ...rev,
+            intervalStage: nextStage,
+            intervalName: stageNames[nextStage - 1] || "30 Days (Permanent)",
+            nextReviewDate: dateStr,
+            lastReviewed: "Today",
+            mastery: Math.min(100, rev.mastery + 10),
+            dueToday: false,
+            repetitions: rev.repetitions + 1
+          };
+        }
+        return rev;
+      })
+    );
+  };
+
+  const addRevisionTopic = (topicData) => {
+    const newRev = {
+      id: `rev-${Date.now()}`,
+      intervalStage: 1,
+      intervalName: "1 Day (Stage 1)",
+      nextReviewDate: "Today",
+      lastReviewed: "Just added",
+      mastery: 50,
+      dueToday: true,
+      repetitions: 0,
+      ...topicData
+    };
+    setRevisions((prev) => [newRev, ...prev]);
+    addToast(`Added "${newRev.topic}" to Spaced Revision Memory System.`, 'info', 'Topic Queued');
+  };
+
+  // Accountability Partner Actions
+  const nudgePartner = (partnerId) => {
+    setPartners((prev) =>
+      prev.map((p) => {
+        if (p.id === partnerId) {
+          addToast(`Motivational telemetry sent to ${p.name}! Keep each other accountable.`, 'success', 'Partner Nudged');
+          return { ...p, nudgeSent: true };
+        }
+        return p;
+      })
+    );
+  };
+
+  const togglePartnerPrivacy = (partnerId, field) => {
+    setPartners((prev) =>
+      prev.map((p) => {
+        if (p.id === partnerId) {
+          const updated = { ...p, [field]: !p[field] };
+          addToast(`Privacy preference updated for ${p.name}.`, 'info', 'Privacy Configured');
+          return updated;
+        }
+        return p;
+      })
+    );
+  };
+
+  const toggleSharedGoal = (partnerId, goalId) => {
+    setPartners((prev) =>
+      prev.map((p) => {
+        if (p.id === partnerId) {
+          const updatedGoals = p.sharedGoals.map((g) => {
+            if (g.id === goalId) {
+              const nextState = !g.completed;
+              if (nextState) {
+                confetti({ particleCount: 50, spread: 60 });
+                addToast(`Mutual milestone achieved with ${p.name}!`, 'trophy', 'Goal Completed');
+                addXP(60);
+              }
+              return { ...g, completed: nextState };
+            }
+            return g;
+          });
+          return { ...p, sharedGoals: updatedGoals };
+        }
+        return p;
+      })
+    );
+  };
+
+  // Distraction Tracker Actions
+  const logDistraction = (reason) => {
+    setDistractions((prev) =>
+      prev.map((d) => (d.reason === reason ? { ...d, occurrences: d.occurrences + 1 } : d))
+    );
+    addToast(`Distraction recorded: "${reason}". Focus recovery suggestions active.`, 'warning', 'Focus Interrupted');
+  };
+
+  // Emergency Study Mode Generator
+  const generateEmergencyPlan = async (examTitle, subject, targetHours = 6.0, weakTopics = []) => {
+    try {
+      const resp = await fetch('http://localhost:8000/api/emergency/cram-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          exam_title: examTitle,
+          subject: subject,
+          exam_date: '2026-11-25T09:00:00',
+          remaining_hours_per_day: targetHours,
+          weak_topics: weakTopics
+        })
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        setEmergencyPlan(data);
+        addToast(`Emergency Study Plan generated for ${examTitle}! Focus mode engaged.`, 'success', 'Emergency Mode Active');
+        return data;
+      }
+    } catch (e) {
+      console.warn('Backend emergency plan failed, generating local high-yield emergency schedule:', e);
+    }
+
+    const localPlan = {
+      exam_title: examTitle,
+      subject: subject,
+      target_hours: targetHours,
+      exam_date: '2026-11-25T09:00:00',
+      status: 'EMERGENCY_MODE_ENGAGED',
+      guidance: 'High-impact active recall sprint. 80% practice derivation, 20% review.',
+      schedule: [
+        { block: 1, time: "08:30 - 09:30", activity: `High-Yield Core Equations: ${subject}`, type: "Active Recall", intensity: "High" },
+        { block: 2, time: "09:40 - 10:40", activity: "Derivations & Past Exam Problem Sets", type: "Practice", intensity: "High" },
+        { block: 3, time: "10:50 - 11:30", activity: "Targeted Flashcard Drills & Traps Audit", type: "Memory Drill", intensity: "Medium" },
+        { block: 4, time: "13:00 - 14:15", activity: "High-Frequency Exam Question Archetypes", type: "Remediation", intensity: "High" },
+        { block: 5, time: "14:30 - 15:45", activity: "45-Minute Timed Mock Exam Simulation", type: "Exam Simulation", intensity: "Extreme" },
+        { block: 6, time: "16:15 - 17:00", activity: "Consolidation & Final Formula Cheat Sheet", type: "Consolidation", intensity: "Low" }
+      ]
+    };
+    setEmergencyPlan(localPlan);
+    addToast(`High-yield emergency study sprint configured for ${examTitle}!`, 'success', 'Emergency Mode Active');
+    return localPlan;
+  };
+
   // Assignment Actions
   const addAssignment = (assignmentData) => {
     const newAsg = {
@@ -370,6 +713,11 @@ export const StudentProvider = ({ children }) => {
     setBiomes(LEARNING_WORLD_BIOMES);
     setKnowledgeGraph(KNOWLEDGE_GRAPH_DATA);
     setReverseQuestions(REVERSE_AI_QUESTIONS);
+    setExams(INITIAL_EXAMS);
+    setRevisions(INITIAL_REVISIONS);
+    setPartners(INITIAL_PARTNERS);
+    setDistractions(INITIAL_DISTRACTIONS);
+    setEmergencyPlan(null);
     localStorage.clear();
     addToast('Default demo data has been restored.', 'info', 'Data Reset');
   };
@@ -377,11 +725,18 @@ export const StudentProvider = ({ children }) => {
   // Computed statistics
   const enrolledCourses = courses.filter((c) => c.enrolled);
   const completedTasksCount = tasks.filter((t) => t.completed).length;
+  const pendingTasksCount = tasks.filter((t) => !t.completed).length;
+  const overdueTasksCount = tasks.filter((t) => !t.completed && (t.dueDate < '2026-11-22' || t.risk === 'High')).length;
+  const highRiskTasksCount = tasks.filter((t) => !t.completed && t.risk === 'High').length;
   const pendingAssignmentsCount = assignments.filter((a) => a.status === 'Pending').length;
   const completedAssignmentsCount = assignments.filter((a) => a.status === 'Graded' || a.status === 'Submitted').length;
   const averageProgress = enrolledCourses.length
     ? Math.round(enrolledCourses.reduce((acc, cur) => acc + cur.progress, 0) / enrolledCourses.length)
     : 0;
+  const averageExamReadiness = exams.length
+    ? Math.round(exams.reduce((acc, cur) => acc + (cur.readinessScore || 0), 0) / exams.length)
+    : 0;
+  const spacedTopicsDueCount = revisions.filter((r) => r.dueToday).length;
 
   return (
     <StudentContext.Provider
@@ -397,6 +752,13 @@ export const StudentProvider = ({ children }) => {
         knowledgeGraph,
         reverseQuestions,
         companionOpen,
+        exams,
+        revisions,
+        partners,
+        distractions,
+        emergencyPlan,
+        hourlyProductivity: HOURLY_PRODUCTIVITY_PATTERN,
+        workloadHeatmap: WORKLOAD_HEATMAP_DATA,
         weeklyAnalytics: WEEKLY_ANALYTICS,
         categoryRadar: CATEGORY_RADAR,
         toasts,
@@ -410,6 +772,18 @@ export const StudentProvider = ({ children }) => {
         editTask,
         deleteTask,
         toggleTaskCompleted,
+        toggleSubtask,
+        breakdownTaskWithAI,
+        acceptRecoveryPlan,
+        addExam,
+        toggleExamTopic,
+        reviewSpacedTopic,
+        addRevisionTopic,
+        nudgePartner,
+        togglePartnerPrivacy,
+        toggleSharedGoal,
+        logDistraction,
+        generateEmergencyPlan,
         addAssignment,
         submitAssignment,
         claimAchievement,
@@ -423,6 +797,12 @@ export const StudentProvider = ({ children }) => {
           totalCourses: courses.length,
           completedTasksCount,
           totalTasksCount: tasks.length,
+          pendingTasksCount,
+          overdueTasksCount,
+          highRiskTasksCount,
+          upcomingExamsCount: exams.length,
+          averageExamReadiness,
+          spacedTopicsDueCount,
           pendingAssignmentsCount,
           completedAssignmentsCount,
           averageProgress,

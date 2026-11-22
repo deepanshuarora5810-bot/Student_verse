@@ -391,6 +391,264 @@ def grade_assignment(req: AssignmentGradeRequest, key: str = Depends(verify_api_
         "timestamp": datetime.utcnow().isoformat() + "Z"
     }
 
+# ----------------- ADVANCED STUDENT TASK MANAGER ENDPOINTS ----------------- #
+
+class TaskBreakdownRequest(BaseModel):
+    title: str = Field(..., example="Build a Distributed Key-Value Store with Raft")
+    description: Optional[str] = ""
+    subject: Optional[str] = "Computer Science"
+    due_date: Optional[str] = None
+    target_hours: Optional[float] = 6.0
+
+class TaskItemModel(BaseModel):
+    id: str
+    title: str
+    subject: Optional[str] = "General"
+    priority: Optional[str] = "Medium"
+    duration: Optional[str] = "2.0h"
+    estimated_hours: Optional[float] = 2.0
+    due_date: Optional[str] = None
+    day: Optional[str] = "Monday"
+    completed: Optional[bool] = False
+
+class SmartPredictRequest(BaseModel):
+    tasks: List[TaskItemModel]
+    daily_capacity_hours: Optional[float] = 4.0
+
+class MissedTaskRecoveryRequest(BaseModel):
+    tasks: List[TaskItemModel]
+    current_date: Optional[str] = None
+
+class EmergencyScheduleRequest(BaseModel):
+    exam_title: str
+    subject: str
+    exam_date: str
+    remaining_hours_per_day: Optional[float] = 6.0
+    weak_topics: Optional[List[str]] = []
+
+@app.post("/api/tasks/breakdown")
+def ai_task_breakdown(req: TaskBreakdownRequest, key: str = Depends(verify_api_key)):
+    """Decompose large academic assignments into granular, actionable subtasks."""
+    ai_cfg = load_ai_config()
+    gemini_key = ai_cfg.get("gemini_api_key")
+
+    # If live Gemini key is present, attempt live generative breakdown
+    if gemini_key and gemini_key.startswith("AIzaSy") and not gemini_key.startswith("AIzaSy_demo"):
+        try:
+            prompt = (
+                f"You are an academic productivity coach. Divide the following student assignment into 4 to 5 "
+                f"concrete subtasks with estimated hours (float) and priority (High/Medium/Low).\n"
+                f"Assignment: {req.title}\nSubject: {req.subject}\nContext: {req.description}\n\n"
+                f"Output strictly valid JSON with key 'subtasks': list of objects with "
+                f"'id', 'title', 'estimated_hours', 'priority', 'notes'."
+            )
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+            payload = {"contents": [{"parts": [{"text": prompt}]}]}
+            resp = httpx.post(url, json=payload, timeout=8.0)
+            if resp.status_code == 200:
+                raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+                clean_json = raw_text.strip().replace("```json", "").replace("```", "").strip()
+                parsed = json.loads(clean_json)
+                subtasks = parsed.get("subtasks", [])
+                total_h = sum(float(s.get("estimated_hours", 1.5)) for s in subtasks)
+                return {
+                    "task_title": req.title,
+                    "subject": req.subject,
+                    "total_estimated_hours": round(total_h, 1),
+                    "ai_generated": True,
+                    "model": "Gemini 1.5 Flash (Live Neural Link)",
+                    "subtasks": subtasks,
+                    "guidance": "Subtasks dynamically calculated using real-time LLM cognitive breakdown."
+                }
+        except Exception:
+            pass
+
+    # Heuristic Rule-Based Breakdown Engine (Deterministic Fallback)
+    title_lower = req.title.lower()
+    total_target = req.target_hours if req.target_hours and req.target_hours > 0 else 6.0
+    
+    if "quantum" in title_lower or "circuit" in title_lower or "qubit" in title_lower:
+        subtasks = [
+            {"id": "sub-1", "title": "Literature Review & Mathematical Formulation", "estimated_hours": round(total_target * 0.2, 1), "priority": "High", "completed": False, "notes": "Review unitary matrix equations and state transforms."},
+            {"id": "sub-2", "title": "Qiskit/Cirq Circuit Simulation & State Vectors", "estimated_hours": round(total_target * 0.35, 1), "priority": "High", "completed": False, "notes": "Construct multi-qubit register and run statevector simulator."},
+            {"id": "sub-3", "title": "Decoherence Noise Mitigation & Error Rates", "estimated_hours": round(total_target * 0.25, 1), "priority": "Medium", "completed": False, "notes": "Simulate depolarizing channel noise and calculate fidelity."},
+            {"id": "sub-4", "title": "Experimental Data Analysis & LaTeX Writeup", "estimated_hours": round(total_target * 0.2, 1), "priority": "Low", "completed": False, "notes": "Export state histograms and compile final lab PDF."}
+        ]
+    elif "neural" in title_lower or "model" in title_lower or "transformer" in title_lower or "ai" in title_lower:
+        subtasks = [
+            {"id": "sub-1", "title": "Data Preprocessing & Tokenizer Setup", "estimated_hours": round(total_target * 0.2, 1), "priority": "Medium", "completed": False, "notes": "Verify tensor dimensions, batch loaders and padding."},
+            {"id": "sub-2", "title": "Model Architecture & Custom Forward Pass", "estimated_hours": round(total_target * 0.35, 1), "priority": "High", "completed": False, "notes": "Implement multi-head attention and rotary embedding matrices."},
+            {"id": "sub-3", "title": "Training Pipeline & Loss Curve Optimization", "estimated_hours": round(total_target * 0.25, 1), "priority": "High", "completed": False, "notes": "Run validation checks, monitor gradient norms and learning rate schedule."},
+            {"id": "sub-4", "title": "Ablation Studies & Benchmark Report", "estimated_hours": round(total_target * 0.2, 1), "priority": "Low", "completed": False, "notes": "Document speedups, memory footprints, and perplexity scores."}
+        ]
+    elif "shader" in title_lower or "webgl" in title_lower or "3d" in title_lower:
+        subtasks = [
+            {"id": "sub-1", "title": "Geometry Setup & Uniform Buffer Layout", "estimated_hours": round(total_target * 0.2, 1), "priority": "Medium", "completed": False, "notes": "Prepare camera matrices, resolution uniforms and time parameters."},
+            {"id": "sub-2", "title": "GLSL Signed Distance Field (SDF) Formulation", "estimated_hours": round(total_target * 0.35, 1), "priority": "High", "completed": False, "notes": "Formulate geometric primitives and smooth minimum unions."},
+            {"id": "sub-3", "title": "Raymarching Loop & Light Volumetrics", "estimated_hours": round(total_target * 0.25, 1), "priority": "High", "completed": False, "notes": "Compute surface normals via central differences and apply lighting."},
+            {"id": "sub-4", "title": "FPS Optimization & Edge Artifact Smoothing", "estimated_hours": round(total_target * 0.2, 1), "priority": "Medium", "completed": False, "notes": "Profile GPU draw calls and test on mobile WebGL."}
+        ]
+    else:
+        subtasks = [
+            {"id": "sub-1", "title": "Requirements Analysis & Scope Definition", "estimated_hours": round(total_target * 0.2, 1), "priority": "High", "completed": False, "notes": "Break down assignment rubric into measurable deliverables."},
+            {"id": "sub-2", "title": "Core Implementation / Deep Problem Solving", "estimated_hours": round(total_target * 0.4, 1), "priority": "High", "completed": False, "notes": "Execute primary solution, code algorithms, or complete lab derivations."},
+            {"id": "sub-3", "title": "Verification, Edge Cases & Testing", "estimated_hours": round(total_target * 0.25, 1), "priority": "Medium", "completed": False, "notes": "Validate against rubric criteria and benchmark outputs."},
+            {"id": "sub-4", "title": "Final Review & Submission Packaging", "estimated_hours": round(total_target * 0.15, 1), "priority": "Low", "completed": False, "notes": "Ensure all attachments, citations, and summaries are completed."}
+        ]
+
+    total_h = sum(s["estimated_hours"] for s in subtasks)
+    return {
+        "task_title": req.title,
+        "subject": req.subject,
+        "total_estimated_hours": round(total_h, 1),
+        "ai_generated": False,
+        "model": "Rule-Based Heuristic Engine (Offline Fallback)",
+        "subtasks": subtasks,
+        "guidance": "Structured sequential breakdown designed for maximum academic retention."
+    }
+
+@app.post("/api/tasks/smart-predict")
+def smart_deadline_predict(req: SmartPredictRequest):
+    """Analyze pending tasks, calculate workload bottlenecks and predict deadline risks."""
+    daily_cap = req.daily_capacity_hours or 4.0
+    weekly_cap = daily_cap * 7
+
+    pending_tasks = [t for t in req.tasks if not t.completed]
+    completed_tasks = [t for t in req.tasks if t.completed]
+
+    # Calculate hours per day
+    day_hours = {"Monday": 0.0, "Tuesday": 0.0, "Wednesday": 0.0, "Thursday": 0.0, "Friday": 0.0, "Saturday": 0.0, "Sunday": 0.0}
+    total_pending_hours = 0.0
+    high_priority_count = 0
+
+    for t in pending_tasks:
+        h = t.estimated_hours if t.estimated_hours and t.estimated_hours > 0 else 2.0
+        # parse duration string if estimated_hours missing
+        if hasattr(t, 'duration') and t.duration and 'h' in str(t.duration):
+            try:
+                h = float(str(t.duration).replace('h', '').strip())
+            except Exception:
+                pass
+        total_pending_hours += h
+        if t.priority == "High":
+            high_priority_count += 1
+        day = t.day if t.day in day_hours else "Monday"
+        day_hours[day] += h
+
+    overloaded_days = [d for d, hrs in day_hours.items() if hrs > daily_cap]
+    utilization_pct = round((total_pending_hours / weekly_cap) * 100, 1) if weekly_cap > 0 else 0
+
+    # Risk level determination
+    risk_score = min(100, int((utilization_pct * 0.6) + (len(overloaded_days) * 10) + (high_priority_count * 5)))
+    if risk_score >= 70 or len(overloaded_days) >= 2 or utilization_pct > 90:
+        risk_level = "High"
+    elif risk_score >= 40 or len(overloaded_days) == 1 or utilization_pct > 65:
+        risk_level = "Medium"
+    else:
+        risk_level = "Low"
+
+    warnings = []
+    if overloaded_days:
+        warnings.append(f"Workload overload detected on: {', '.join(overloaded_days)}. Exceeds daily cap of {daily_cap}h.")
+    if high_priority_count >= 3:
+        warnings.append(f"{high_priority_count} high-priority tasks pending simultaneously. Risk of cognitive exhaustion.")
+    if total_pending_hours > weekly_cap:
+        warnings.append(f"Total required hours ({total_pending_hours:.1f}h) exceeds weekly bandwidth ({weekly_cap:.1f}h).")
+
+    recommendations = []
+    if overloaded_days:
+        recommendations.append(f"Rebalance tasks from {overloaded_days[0]} to lighter days like Tuesday or Friday.")
+    recommendations.append("Break large assignments into 25-minute Pomodoro intervals to prevent procrastination.")
+    if risk_level == "High":
+        recommendations.append("Activate Emergency Study Mode or negotiate milestone extensions for lower-tier tasks.")
+
+    return {
+        "risk_level": risk_level,
+        "risk_score": risk_score,
+        "total_pending_hours": round(total_pending_hours, 1),
+        "weekly_capacity_hours": weekly_cap,
+        "utilization_percentage": utilization_pct,
+        "pending_count": len(pending_tasks),
+        "completed_count": len(completed_tasks),
+        "overloaded_days": overloaded_days,
+        "day_workload": day_hours,
+        "warnings": warnings,
+        "recommendations": recommendations,
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+
+@app.post("/api/tasks/recovery")
+def missed_task_recovery(req: MissedTaskRecoveryRequest):
+    """Detect overdue and incomplete tasks, producing clash-free rescheduled slots."""
+    tasks = req.tasks
+    incomplete_tasks = [t for t in tasks if not t.completed]
+    
+    # Sort incomplete tasks by priority (High first)
+    priority_weights = {"High": 3, "Medium": 2, "Low": 1}
+    sorted_tasks = sorted(incomplete_tasks, key=lambda x: priority_weights.get(x.priority, 1), reverse=True)
+
+    available_slots = [
+        {"day": "Monday", "time": "14:00 - 16:00", "assigned": False},
+        {"day": "Tuesday", "time": "10:00 - 12:30", "assigned": False},
+        {"day": "Wednesday", "time": "16:00 - 18:00", "assigned": False},
+        {"day": "Thursday", "time": "11:00 - 13:00", "assigned": False},
+        {"day": "Friday", "time": "14:00 - 16:30", "assigned": False},
+        {"day": "Saturday", "time": "10:00 - 13:00", "assigned": False}
+    ]
+
+    recovery_plan = []
+    slot_index = 0
+
+    for task in sorted_tasks:
+        if slot_index < len(available_slots):
+            slot = available_slots[slot_index]
+            recovery_plan.append({
+                "task_id": task.id,
+                "title": task.title,
+                "subject": task.subject,
+                "priority": task.priority,
+                "suggested_day": slot["day"],
+                "suggested_time": slot["time"],
+                "urgency": "Immediate" if task.priority == "High" else "Scheduled",
+                "rationale": f"Dedicated collision-free study block allocated on {slot['day']} ({slot['time']})."
+            })
+            slot["assigned"] = True
+            slot_index += 1
+
+    return {
+        "overdue_count": len(recovery_plan),
+        "recovery_plan": recovery_plan,
+        "clash_detected": False,
+        "message": f"Successfully synthesized collision-free recovery plan for {len(recovery_plan)} tasks.",
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+
+@app.post("/api/emergency/cram-schedule")
+def emergency_study_schedule(req: EmergencyScheduleRequest):
+    """Generate high-yield sprint timetable for imminent exams within 24-72 hours."""
+    hours = req.remaining_hours_per_day or 6.0
+    weak = req.weak_topics if req.weak_topics else ["Core Principles", "Common Problem Patterns", "Past Paper Questions"]
+
+    schedule_blocks = [
+        {"block": 1, "time": "08:30 - 09:30", "activity": f"High-Yield Concept Review: {weak[0]}", "type": "Active Recall", "intensity": "High"},
+        {"block": 2, "time": "09:40 - 10:40", "activity": f"Problem Set & Formula Derivation: {req.subject}", "type": "Practice", "intensity": "High"},
+        {"block": 3, "time": "10:50 - 11:30", "activity": "Flashcard Repetition & Mistake Audit", "type": "Memory Drill", "intensity": "Medium"},
+        {"block": 4, "time": "13:00 - 14:15", "activity": f"Deep Dive into Weak Concept: {weak[1] if len(weak) > 1 else weak[0]}", "type": "Remediation", "intensity": "High"},
+        {"block": 5, "time": "14:30 - 15:45", "activity": "Timed Mock Exam Simulation (45m) + Correction Review", "type": "Exam Simulation", "intensity": "Extreme"},
+        {"block": 6, "time": "16:15 - 17:00", "activity": "Synthesized Cheat-Sheet Summary & High-Probability Traps", "type": "Consolidation", "intensity": "Low"}
+    ]
+
+    return {
+        "exam_title": req.exam_title,
+        "subject": req.subject,
+        "target_hours": hours,
+        "exam_date": req.exam_date,
+        "status": "EMERGENCY_MODE_ENGAGED",
+        "guidance": "Focus 80% on high-weight concepts and active problem solving. Avoid passive reading.",
+        "schedule": schedule_blocks,
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+
 # WebSocket Classroom Real-Time Collaboration Manager
 class ClassroomConnectionManager:
     def __init__(self):

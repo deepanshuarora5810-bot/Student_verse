@@ -24,6 +24,7 @@ export const Sidebar = ({ onQuickTaskClick }) => {
 
   const links = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Productivity Suite', path: '/productivity', icon: Brain, highlight: true, badge: stats.overdueTasksCount > 0 ? stats.overdueTasksCount : undefined },
     { label: '3D Universe', path: '/universe', icon: Globe, highlight: true },
     { label: 'Reverse AI Student', path: '/reverse-classroom', icon: GraduationCap, highlight: true },
     { label: 'Living 3D Textbook', path: '/living-textbook', icon: BookOpen, highlight: true },

@@ -31,6 +31,7 @@ export const Navbar = () => {
   const navLinks = [
     { label: 'Home', path: '/', icon: Compass },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Productivity', path: '/productivity', icon: Brain },
     { label: '3D Universe', path: '/universe', icon: Globe },
     { label: 'Reverse AI', path: '/reverse-classroom', icon: GraduationCap },
     { label: 'Textbook 3D', path: '/living-textbook', icon: BookOpen },

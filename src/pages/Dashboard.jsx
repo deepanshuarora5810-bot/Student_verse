@@ -35,17 +35,47 @@ import {
   Brain,
   Video,
   PenTool,
-  ShieldAlert
+  ShieldAlert,
+  AlertTriangle,
+  Target,
+  ListTodo,
+  CheckSquare,
+  Users,
+  Repeat
 } from 'lucide-react';
 
 export const Dashboard = () => {
-  const { student, stats, weeklyAnalytics, assignments, activities, addXP, addToast, updateProfile } = useStudent();
+  const {
+    student,
+    stats,
+    weeklyAnalytics,
+    assignments,
+    activities,
+    tasks,
+    exams,
+    hourlyProductivity,
+    workloadHeatmap,
+    toggleTaskCompleted,
+    addXP,
+    addToast,
+    updateProfile
+  } = useStudent();
+
   const [logHoursOpen, setLogHoursOpen] = useState(false);
   const [hoursToAdd, setHoursToAdd] = useState('2.0');
   const [sessionSubject, setSessionSubject] = useState('Quantum Computing');
   const [sessionNotes, setSessionNotes] = useState('');
+  const [selectedHeatmapDay, setSelectedHeatmapDay] = useState(workloadHeatmap[workloadHeatmap.length - 1]);
 
   const pendingAssignments = assignments.filter((a) => a.status === 'Pending').slice(0, 3);
+
+  // Tasks requiring immediate attention (Overdue or High Risk)
+  const urgentTasks = tasks
+    .filter((t) => !t.completed && (t.dueDate < '2026-11-22' || t.risk === 'High' || t.priority === 'High'))
+    .slice(0, 4);
+
+  // Today's schedule tasks (Sunday or first upcoming day)
+  const todayTasks = tasks.filter((t) => t.day === 'Monday' || t.day === 'Sunday' || t.day === 'All');
 
   const handleLogHours = (e) => {
     e.preventDefault();
@@ -74,7 +104,6 @@ export const Dashboard = () => {
       
       {/* PERSONALIZED WELCOME HEADER */}
       <div className="relative glass-card rounded-3xl p-6 sm:p-8 border-indigo-500/30 overflow-hidden">
-        {/* Glow orb */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-cyan-500/15 via-purple-600/15 to-transparent rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -101,13 +130,21 @@ export const Dashboard = () => {
                 {timeGreeting}, <span className="text-gradient-cyan">{student.name}</span>
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
-                Neural telemetry initialized. You are currently on a <strong className="text-amber-300 font-semibold">{stats.streak}-day streak</strong> with <strong>{stats.enrolledCount} active courses</strong>.
+                Neural telemetry initialized. You are currently on a <strong className="text-amber-300 font-semibold">{stats.streak}-day streak</strong> with <strong>{stats.enrolledCount} active courses</strong> and <strong>{stats.averageExamReadiness}% exam readiness</strong>.
               </p>
             </div>
           </div>
 
           {/* Quick Action Buttons */}
           <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/productivity"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 shadow-neon-purple transition-all transform active:scale-95"
+            >
+              <Brain className="w-4 h-4" />
+              <span>Productivity Hub</span>
+            </Link>
+
             <button
               onClick={() => setLogHoursOpen(true)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all transform active:scale-95"
@@ -121,7 +158,7 @@ export const Dashboard = () => {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
             >
               <Calendar className="w-4 h-4 text-purple-400" />
-              <span>Open Timetable</span>
+              <span>Timetable</span>
             </Link>
           </div>
         </div>
@@ -146,51 +183,352 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* 4 KEY METRIC CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <DashboardCard
-          title="Courses Enrolled"
-          value={stats.enrolledCount}
-          subtitle={`${stats.totalCourses - stats.enrolledCount} available in catalog`}
-          icon={BookOpen}
-          color="cyan"
-          trend="+1 this month"
-          actionText="Browse Courses"
-          onAction={() => window.location.href = '/courses'}
-        />
+      {/* DYNAMIC METRIC CARDS (ALL 8 CORE METRICS) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
+        {/* Metric 1: Total Tasks */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Total Tasks</span>
+          <div className="my-2">
+            <p className="text-xl sm:text-2xl font-extrabold text-white font-display">{stats.totalTasksCount}</p>
+          </div>
+          <span className="text-[10px] font-mono text-cyan-400">In calendar</span>
+        </div>
 
-        <DashboardCard
-          title="Deep Focus Hours"
-          value={`${student.studyHours}h`}
-          subtitle="Verified cognitive time"
-          icon={Clock}
-          color="purple"
-          trend="+8.5h this week"
-          actionText="Log New Hours"
-          onAction={() => setLogHoursOpen(true)}
-        />
+        {/* Metric 2: Completed Tasks */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Completed</span>
+          <div className="my-2">
+            <p className="text-xl sm:text-2xl font-extrabold text-emerald-400 font-display">{stats.completedTasksCount}</p>
+          </div>
+          <span className="text-[10px] font-mono text-emerald-400">
+            {stats.totalTasksCount ? Math.round((stats.completedTasksCount / stats.totalTasksCount) * 100) : 0}% done
+          </span>
+        </div>
 
-        <DashboardCard
-          title="Completed Tasks"
-          value={`${stats.completedTasksCount} / ${stats.totalTasksCount}`}
-          subtitle="Study planner items"
-          icon={CheckCircle2}
-          color="emerald"
-          trend={`${Math.round((stats.completedTasksCount / (stats.totalTasksCount || 1)) * 100)}% complete`}
-          actionText="View Planner"
-          onAction={() => window.location.href = '/planner'}
-        />
+        {/* Metric 3: Pending Tasks */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Pending</span>
+          <div className="my-2">
+            <p className="text-xl sm:text-2xl font-extrabold text-purple-300 font-display">{stats.pendingTasksCount}</p>
+          </div>
+          <span className="text-[10px] font-mono text-purple-400">Active queue</span>
+        </div>
 
-        <DashboardCard
-          title="Overall Progress"
-          value={`${stats.averageProgress}%`}
-          subtitle="Across active disciplines"
-          icon={TrendingUp}
-          color="amber"
-          trend="Top 5% Cohort"
-          actionText="View Assignments"
-          onAction={() => window.location.href = '/assignments'}
-        />
+        {/* Metric 4: Overdue Tasks */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Overdue</span>
+          <div className="my-2">
+            <p className="text-xl sm:text-2xl font-extrabold text-rose-400 font-display">{stats.overdueTasksCount}</p>
+          </div>
+          <span className="text-[10px] font-mono text-rose-400">Requires recovery</span>
+        </div>
+
+        {/* Metric 5: Upcoming Exams */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Upcoming Exams</span>
+          <div className="my-2">
+            <p className="text-xl sm:text-2xl font-extrabold text-amber-300 font-display">{stats.upcomingExamsCount}</p>
+          </div>
+          <span className="text-[10px] font-mono text-amber-400">Next in 3d</span>
+        </div>
+
+        {/* Metric 6: Study Streak */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Study Streak</span>
+          <div className="my-2 flex items-center gap-1">
+            <Flame className="w-5 h-5 text-amber-400" />
+            <p className="text-xl sm:text-2xl font-extrabold text-white font-display">{stats.streak}d</p>
+          </div>
+          <span className="text-[10px] font-mono text-amber-300">Continuous fire</span>
+        </div>
+
+        {/* Metric 7: Exam Readiness Score */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Readiness Score</span>
+          <div className="my-2">
+            <p className="text-xl sm:text-2xl font-extrabold text-cyan-300 font-display">{stats.averageExamReadiness}%</p>
+          </div>
+          <span className="text-[10px] font-mono text-cyan-400">Cohort top 10%</span>
+        </div>
+
+        {/* Metric 8: Focus Hours */}
+        <div className="glass-card rounded-2xl p-4 border-indigo-500/20 flex flex-col justify-between">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Focus Hours</span>
+          <div className="my-2">
+            <p className="text-xl sm:text-2xl font-extrabold text-indigo-300 font-display">{student.studyHours}h</p>
+          </div>
+          <span className="text-[10px] font-mono text-indigo-400">Verified deep work</span>
+        </div>
+      </div>
+
+      {/* TASKS REQUIRING IMMEDIATE ATTENTION */}
+      {urgentTasks.length > 0 && (
+        <div className="glass-card rounded-3xl p-6 border-rose-500/30 bg-gradient-to-r from-rose-500/10 via-transparent to-transparent">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-rose-500/20 text-rose-300 animate-pulse">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-bold font-display text-white">
+                  Tasks Requiring Immediate Attention
+                </h3>
+                <p className="text-xs text-slate-400">
+                  {urgentTasks.length} high-priority or overdue tasks require resolution to preserve your deadline telemetry.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/planner"
+              className="text-xs font-mono text-rose-300 hover:text-white flex items-center gap-1.5 transition-colors"
+            >
+              <span>Engage Recovery Planner</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {urgentTasks.map((t) => (
+              <div
+                key={t.id}
+                className="p-3.5 rounded-2xl bg-slate-900/90 border border-rose-500/20 flex flex-col justify-between gap-3 group hover:border-rose-500/50 transition-all"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-[10px] font-mono mb-1.5">
+                    <span className="text-rose-400 font-bold uppercase">{t.day} • {t.duration}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">
+                      {t.priority}
+                    </span>
+                  </div>
+                  <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-cyan-300 transition-colors line-clamp-2">
+                    {t.title}
+                  </h4>
+                  <p className="text-[11px] text-purple-300 font-mono mt-1 truncate">{t.subject}</p>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                  <span className="text-[10px] text-slate-400 font-mono">Due: {t.dueDate || 'Soon'}</span>
+                  <button
+                    onClick={() => toggleTaskCompleted(t.id)}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 transition-all"
+                  >
+                    <CheckSquare className="w-3 h-3" />
+                    <span>Done</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* FEATURE D: ACADEMIC WORKLOAD HEATMAP */}
+      <div className="glass-card rounded-3xl p-6 sm:p-8 border-indigo-500/30 flex flex-col gap-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-400 font-semibold mb-1">
+              <Calendar className="w-4 h-4" />
+              <span>Cognitive Load Matrix</span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold font-display text-white">
+              Academic Workload Heatmap (28-Day Telemetry)
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Identifies overloaded days, task congestion density, and recommended redistribution days.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
+            <span>Low</span>
+            <span className="w-3.5 h-3.5 rounded bg-slate-800 border border-white/5" />
+            <span className="w-3.5 h-3.5 rounded bg-indigo-950 border border-indigo-700/50" />
+            <span className="w-3.5 h-3.5 rounded bg-indigo-600" />
+            <span className="w-3.5 h-3.5 rounded bg-cyan-400" />
+            <span className="w-3.5 h-3.5 rounded bg-rose-500" />
+            <span>Overloaded</span>
+          </div>
+        </div>
+
+        {/* Heatmap Grid Matrix */}
+        <div className="grid grid-cols-7 sm:grid-cols-14 lg:grid-cols-28 gap-2 pt-2">
+          {workloadHeatmap.map((cell, idx) => {
+            const isSelected = selectedHeatmapDay?.date === cell.date;
+            const hasOverdue = cell.overdue > 0;
+            const bgClass =
+              hasOverdue
+                ? 'bg-rose-500/80 hover:bg-rose-500 ring-rose-400'
+                : cell.intensity === 4
+                ? 'bg-cyan-500 hover:bg-cyan-400 ring-cyan-300'
+                : cell.intensity === 3
+                ? 'bg-indigo-600 hover:bg-indigo-500 ring-indigo-400'
+                : cell.intensity === 2
+                ? 'bg-indigo-900/80 hover:bg-indigo-800 ring-indigo-600'
+                : 'bg-slate-800 hover:bg-slate-700 ring-slate-600';
+
+            return (
+              <button
+                key={cell.date}
+                onClick={() => setSelectedHeatmapDay(cell)}
+                className={`h-11 rounded-xl flex flex-col items-center justify-center p-1 transition-all ${bgClass} ${
+                  isSelected ? 'ring-2 ring-white scale-105 z-10' : ''
+                }`}
+                title={`${cell.date} (${cell.dayName}): ${cell.tasks} tasks, ${cell.hours}h`}
+              >
+                <span className="text-[9px] font-mono text-white/80 font-bold leading-tight">
+                  {cell.date.split('-')[2]}
+                </span>
+                <span className="text-[8px] font-mono text-white/90 font-extrabold leading-tight">
+                  {cell.hours}h
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected Heatmap Day Details Bar */}
+        {selectedHeatmapDay && (
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-3">
+              <span className="px-2.5 py-1 rounded-xl bg-purple-500/20 text-purple-300 font-mono font-bold">
+                {selectedHeatmapDay.date} ({selectedHeatmapDay.dayName})
+              </span>
+              <span className="text-slate-300">
+                Load: <strong className="text-white">{selectedHeatmapDay.hours} Hours</strong> • <strong className="text-cyan-400">{selectedHeatmapDay.tasks} Tasks Scheduled</strong>
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 font-mono text-[11px]">
+              <span className="text-emerald-400">Completed: {selectedHeatmapDay.completed}</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-amber-400">Pending: {selectedHeatmapDay.tasks - selectedHeatmapDay.completed}</span>
+              {selectedHeatmapDay.overdue > 0 && (
+                <>
+                  <span className="text-slate-400">•</span>
+                  <span className="text-rose-400 font-bold">Overdue: {selectedHeatmapDay.overdue}</span>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* TODAY'S SCHEDULE & HOURLY PRODUCTIVITY PATTERNS */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Today's Schedule List */}
+        <div className="lg:col-span-5 glass-card rounded-2xl p-6 border-indigo-500/20 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-400 font-semibold">
+                  <Calendar className="w-4 h-4" />
+                  <span>Daily Agenda</span>
+                </div>
+                <h3 className="text-lg font-bold font-display text-white mt-1">
+                  Today's Study Schedule
+                </h3>
+              </div>
+              <Link
+                to="/planner"
+                className="text-xs font-mono text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+              >
+                <span>Full Timetable</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              {todayTasks.slice(0, 4).map((task) => (
+                <div
+                  key={task.id}
+                  className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 transition-all ${
+                    task.completed
+                      ? 'bg-emerald-500/10 border-emerald-500/20 opacity-70'
+                      : 'bg-white/5 border-white/5 hover:border-cyan-500/30'
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <h4 className={`text-xs sm:text-sm font-semibold truncate ${task.completed ? 'line-through text-slate-400' : 'text-white'}`}>
+                      {task.title}
+                    </h4>
+                    <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+                      {task.subject} • {task.time}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => toggleTaskCompleted(task.id)}
+                    className="p-1 text-slate-400 hover:text-cyan-400 shrink-0"
+                  >
+                    {task.completed ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full border border-slate-500 hover:border-cyan-400" />
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono">
+            <span className="text-slate-400">Queue: <strong>{todayTasks.length} Sessions</strong></span>
+            <Link
+              to="/productivity"
+              className="text-purple-300 hover:text-purple-200 font-bold flex items-center gap-1"
+            >
+              <span>Launch Focus Timer &rarr;</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* FEATURE E: HOURLY PRODUCTIVITY PATTERN DETECTOR */}
+        <div className="lg:col-span-7 glass-card rounded-2xl p-6 border-indigo-500/20 flex flex-col justify-between">
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-mono uppercase text-purple-400 font-semibold">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>Pattern Detector</span>
+                </div>
+                <h3 className="text-lg font-bold font-display text-white mt-1">
+                  Productivity Pattern (Hourly Focus Efficiency)
+                </h3>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold self-start sm:self-auto">
+                Optimal Sprint: 10:00 & 16:00
+              </span>
+            </div>
+
+            <div className="h-56 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={hourlyProductivity}>
+                  <defs>
+                    <linearGradient id="hourlyGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.6} />
+                  <XAxis dataKey="hour" stroke="#64748b" tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                  <YAxis stroke="#64748b" tick={{ fontSize: 11, fill: '#94a3b8' }} unit="%" domain={[0, 100]} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#090e24', borderColor: '#6366f1', borderRadius: '0.75rem', color: '#fff' }}
+                    itemStyle={{ color: '#c084fc' }}
+                  />
+                  <Area type="monotone" dataKey="productivity" stroke="#8b5cf6" strokeWidth={2.5} fillOpacity={1} fill="url(#hourlyGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="mt-3 p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between text-xs font-mono text-slate-300">
+            <span>Morning Peak: <strong className="text-cyan-300">09:00 - 11:30 (95% Efficiency)</strong></span>
+            <span>Afternoon Peak: <strong className="text-purple-300">15:00 - 17:00 (92% Efficiency)</strong></span>
+          </div>
+        </div>
+
       </div>
 
       {/* 3D SPATIAL & AI ECOSYSTEM LAUNCH MATRIX */}
@@ -198,10 +536,10 @@ export const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4" /> Next-Gen 3D Educational Ecosystem
+              <Sparkles className="w-4 h-4" /> Spatial 3D Learning & AI Hubs
             </span>
             <h3 className="text-xl font-bold font-display text-white mt-0.5">
-              Interactive 3D Virtual Worlds & Digital Labs
+              Interactive 3D Virtual Worlds & Digital Laboratories
             </h3>
           </div>
           <span className="text-xs font-mono text-slate-400 hidden sm:inline">
@@ -210,7 +548,6 @@ export const Dashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1: 3D Universe */}
           <Link
             to="/universe"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-cyan-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
@@ -233,7 +570,6 @@ export const Dashboard = () => {
             </span>
           </Link>
 
-          {/* Card 2: Reverse Classroom AI */}
           <Link
             to="/reverse-classroom"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-indigo-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
@@ -256,7 +592,6 @@ export const Dashboard = () => {
             </span>
           </Link>
 
-          {/* Card 3: Living 3D Textbook */}
           <Link
             to="/living-textbook"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-emerald-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
@@ -279,7 +614,6 @@ export const Dashboard = () => {
             </span>
           </Link>
 
-          {/* Card 4: Teacher Whiteboard */}
           <Link
             to="/whiteboard"
             className="group p-5 rounded-2xl glass-card border-indigo-500/20 hover:border-teal-400/50 bg-[#060a1f] transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
@@ -304,127 +638,7 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* ANALYTICS CHARTS SECTION */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Weekly Activity Area Chart */}
-        <div className="lg:col-span-8 glass-card rounded-2xl p-6 border-indigo-500/20 flex flex-col justify-between">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-400 font-semibold">
-                <TrendingUp className="w-4 h-4" />
-                <span>Cognitive Telemetry</span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold font-display text-white mt-1">
-                Weekly Study Hours vs Target
-              </h3>
-            </div>
-
-            <div className="flex items-center gap-4 text-xs font-mono">
-              <div className="flex items-center gap-1.5 text-cyan-300">
-                <span className="w-3 h-3 rounded-full bg-cyan-400" />
-                <span>Actual Hours</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-purple-400">
-                <span className="w-3 h-3 rounded-full bg-purple-500" />
-                <span>Target Hours</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="h-64 sm:h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={weeklyAnalytics} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="cyanGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
-                  </linearGradient>
-                  <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.6} />
-                <XAxis dataKey="day" stroke="#64748b" tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                <YAxis stroke="#64748b" tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#090e24',
-                    borderColor: 'rgba(99, 102, 241, 0.4)',
-                    borderRadius: '0.75rem',
-                    color: '#fff',
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
-                  }}
-                  itemStyle={{ color: '#38bdf8' }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="hours"
-                  name="Study Hours"
-                  stroke="#06b6d4"
-                  strokeWidth={2.5}
-                  fillOpacity={1}
-                  fill="url(#cyanGradient)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="target"
-                  name="Target"
-                  stroke="#a855f7"
-                  strokeWidth={2}
-                  strokeDasharray="4 4"
-                  fillOpacity={1}
-                  fill="url(#purpleGradient)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* XP Daily Bar Chart */}
-        <div className="lg:col-span-4 glass-card rounded-2xl p-6 border-indigo-500/20 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase text-purple-400 font-semibold mb-1">
-              <Zap className="w-4 h-4" />
-              <span>XP Yield</span>
-            </div>
-            <h3 className="text-lg font-bold font-display text-white">
-              Daily XP Velocity
-            </h3>
-            <p className="text-xs text-slate-400 mt-1">
-              Points earned via assignments & lecture modules.
-            </p>
-          </div>
-
-          <div className="h-56 w-full my-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weeklyAnalytics}>
-                <CartesianGrid strokeDasharray="2 2" stroke="#1e293b" opacity={0.5} />
-                <XAxis dataKey="day" stroke="#64748b" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <YAxis stroke="#64748b" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#090e24',
-                    borderColor: 'rgba(168, 85, 247, 0.4)',
-                    borderRadius: '0.75rem',
-                    color: '#fff'
-                  }}
-                />
-                <Bar dataKey="xp" name="XP Points" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="p-3 rounded-xl bg-purple-950/20 border border-purple-500/20 flex items-center justify-between text-xs">
-            <span className="text-slate-300">Weekly Total:</span>
-            <span className="font-mono font-bold text-purple-300">+3,650 XP Earned</span>
-          </div>
-        </div>
-
-      </div>
-
-      {/* LOWER SECTION: UPCOMING DEADLINES & RECENT ACTIVITIES */}
+      {/* LOWER SECTION: UPCOMING DEADLINES & AUDIT FEED */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Upcoming Deadlines */}
