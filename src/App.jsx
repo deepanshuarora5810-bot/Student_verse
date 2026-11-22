@@ -18,6 +18,7 @@ import { ReverseClassroom } from './pages/ReverseClassroom';
 import { LivingTextbook } from './pages/LivingTextbook';
 import { ProductivityHub } from './pages/ProductivityHub';
 import { FaceMonitoringMode } from './pages/FaceMonitoringMode';
+import { AnswerIQ } from './pages/AnswerIQ';
 import { Login } from './pages/Login';
 import { TeacherDashboard } from './pages/TeacherDashboard';
 import { AiCompanionModal } from './components/companion/AiCompanionModal';
@@ -92,6 +93,7 @@ export const App = () => {
           <main className="flex-1 min-w-0 flex flex-col">
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/answer-iq" element={<AnswerIQ />} />
               <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
               <Route path="/productivity" element={<ProductivityHub />} />
               <Route path="/face-monitoring" element={<FaceMonitoringMode />} />

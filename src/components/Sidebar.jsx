@@ -19,7 +19,8 @@ import {
   Bot,
   Camera,
   School,
-  LogOut
+  LogOut,
+  Scale
 } from 'lucide-react';
 
 export const Sidebar = ({ onQuickTaskClick }) => {
@@ -31,6 +32,7 @@ export const Sidebar = ({ onQuickTaskClick }) => {
 
   const studentLinks = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'AnswerIQ Comparator', path: '/answer-iq', icon: Scale, highlight: true },
     { label: 'Productivity Suite', path: '/productivity', icon: Brain, highlight: true, badge: stats.overdueTasksCount > 0 ? stats.overdueTasksCount : undefined },
     { label: 'Face Monitoring Mode', path: '/face-monitoring', icon: Camera, highlight: true },
     { label: '3D Universe', path: '/universe', icon: Globe, highlight: true },
@@ -47,6 +49,7 @@ export const Sidebar = ({ onQuickTaskClick }) => {
 
   const teacherLinks = [
     { label: 'Teacher Dashboard', path: '/teacher-dashboard', icon: LayoutDashboard },
+    { label: 'AnswerIQ Comparator', path: '/answer-iq', icon: Scale, highlight: true },
     { label: 'Digital Whiteboard', path: '/whiteboard', icon: PenTool, highlight: true },
     { label: 'Face Proctor Monitor', path: '/face-monitoring', icon: Camera, highlight: true },
     { label: 'Assignments & Grading', path: '/assignments', icon: CheckSquare, badge: teacher.pendingReviews },
