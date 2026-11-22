@@ -54,11 +54,11 @@ export const App = () => {
   const [quickTaskSubject, setQuickTaskSubject] = useState('Quantum Computing');
   const [quickTaskDay, setQuickTaskDay] = useState('Monday');
 
+  const isHome = location.pathname === '/';
   const isLogin = location.pathname === '/login';
   const isWhiteboard = location.pathname === '/whiteboard';
   const isUniverse = location.pathname === '/universe';
   const isImmersiveFullPage = isWhiteboard || isUniverse;
-  const isUnauthenticated = !authRole;
 
   const handleQuickTaskSubmit = (e) => {
     e.preventDefault();
@@ -80,28 +80,23 @@ export const App = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#040714] text-slate-100 cyber-grid-pattern selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Top Universal Navbar (Hidden on Login for a focused, clean login experience) */}
-      {!isUnauthenticated && !isLogin && <Navbar />}
+      {/* Top Universal Navbar (Visible across all pages except dedicated full-screen login) */}
+      {!isLogin && <Navbar />}
 
       {/* Main Content Area */}
-      {isUnauthenticated || isLogin ? (
+      {isLogin ? (
         /* Full-screen clean layout for Login */
         <main className="flex-1 flex items-center justify-center p-4">
           <Routes>
-            <Route
-              path="/login"
-              element={
-                authRole === 'student' ? (
-                  <Navigate to="/dashboard" replace />
-                ) : authRole === 'teacher' ? (
-                  <Navigate to="/teacher-dashboard" replace />
-                ) : (
-                  <Login />
-                )
-              }
-            />
-            {/* Any unauthenticated navigation redirects to /login */}
+            <Route path="/login" element={<Login />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </main>
+      ) : isHome ? (
+        /* Home Landing Page - Restored to work as previously */
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
           </Routes>
         </main>
       ) : isImmersiveFullPage ? (
@@ -135,17 +130,7 @@ export const App = () => {
           {/* Core Content Body */}
           <main className="flex-1 min-w-0 flex flex-col">
             <Routes>
-              {/* Root redirect based on active authenticated role */}
-              <Route
-                path="/"
-                element={
-                  authRole === 'teacher' ? (
-                    <Navigate to="/teacher-dashboard" replace />
-                  ) : (
-                    <Navigate to="/dashboard" replace />
-                  )
-                }
-              />
+              <Route path="/" element={<Navigate to="/" replace />} />
               <Route
                 path="/dashboard"
                 element={
@@ -266,10 +251,10 @@ export const App = () => {
       )}
 
       {/* Universal Footer (hidden in immersive views and login) */}
-      {!isImmersiveFullPage && !isUnauthenticated && !isLogin && <Footer />}
+      {!isImmersiveFullPage && !isLogin && <Footer />}
 
       {/* Global 3D AI Companion Dock & Modal (visible only when logged in) */}
-      {!isUnauthenticated && !isLogin && <AiCompanionModal />}
+      {!isLogin && authRole && <AiCompanionModal />}
 
       {/* Toast Notification Layer */}
       <ToastContainer />
