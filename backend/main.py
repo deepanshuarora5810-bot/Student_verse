@@ -735,6 +735,108 @@ def get_classroom_status(room_id: str):
         "settings": settings
     }
 
+# ----------------- COURSES & CURRICULUM ENDPOINTS ----------------- #
+
+COURSES_DATA = [
+    {
+        "id": "crs-101",
+        "title": "Quantum Computing & Qubit Algorithms",
+        "category": "Quantum",
+        "instructor": "Dr. Elena Rostova",
+        "duration": "12 Weeks • 48 Hours",
+        "level": "Advanced",
+        "rating": 4.95,
+        "enrolled_count": 2480,
+        "api_enabled": True,
+        "description": "Master variational quantum eigensolvers, quantum teleportation circuits, and fault-tolerant quantum error correction.",
+        "syllabus_modules": 4
+    },
+    {
+        "id": "crs-102",
+        "title": "Deep Neural Architectures & Attention Transformers",
+        "category": "AI & Data",
+        "instructor": "Prof. Marcus Vance",
+        "duration": "10 Weeks • 40 Hours",
+        "level": "Advanced",
+        "rating": 4.88,
+        "enrolled_count": 3120,
+        "api_enabled": True,
+        "description": "Dive deep into multi-head sparse attention, Mixture of Experts (MoE), and diffusion models.",
+        "syllabus_modules": 4
+    },
+    {
+        "id": "crs-103",
+        "title": "Real-Time Procedural Graphics with Three.js & GLSL",
+        "category": "Creative Dev",
+        "instructor": "Sora Takahashi",
+        "duration": "8 Weeks • 32 Hours",
+        "level": "Intermediate",
+        "rating": 4.92,
+        "enrolled_count": 1890,
+        "api_enabled": True,
+        "description": "Create high-performance WebGL shaders, raymarching volumetric spaces, and GPU particle physics.",
+        "syllabus_modules": 4
+    },
+    {
+        "id": "crs-104",
+        "title": "Brain-Computer Interfaces & Neural Telemetry UX",
+        "category": "Neural UX",
+        "instructor": "Dr. Maya Lin",
+        "duration": "6 Weeks • 24 Hours",
+        "level": "Advanced",
+        "rating": 4.85,
+        "enrolled_count": 1420,
+        "api_enabled": True,
+        "description": "Process non-invasive EEG signals, decode attentional states, and engineer neuro-adaptive user interfaces.",
+        "syllabus_modules": 4
+    },
+    {
+        "id": "crs-105",
+        "title": "Zero-Knowledge Cryptography & Distributed Ledgers",
+        "category": "Web3",
+        "instructor": "Vikram Sethi",
+        "duration": "9 Weeks • 36 Hours",
+        "level": "Advanced",
+        "rating": 4.79,
+        "enrolled_count": 1150,
+        "api_enabled": True,
+        "description": "Build zk-SNARK circuits with Circom, verify validity proofs on-chain, and engineer privacy-preserving protocols.",
+        "syllabus_modules": 4
+    },
+    {
+        "id": "crs-106",
+        "title": "Autonomous Robotics & Spatial ROS2 Navigation",
+        "category": "Robotics",
+        "instructor": "Ingrid Bergstrom",
+        "duration": "11 Weeks • 44 Hours",
+        "level": "Intermediate",
+        "rating": 4.91,
+        "enrolled_count": 1640,
+        "api_enabled": True,
+        "description": "Program LiDAR SLAM, implement extended Kalman filters, and navigate simulated quadrupeds in Gazebo.",
+        "syllabus_modules": 4
+    }
+]
+
+@app.get("/api/courses")
+def get_courses(key: str = Depends(verify_api_key)):
+    return {
+        "status": "success",
+        "caller_key": key[:12] + "..." if len(key) > 12 else key,
+        "total": len(COURSES_DATA),
+        "courses": COURSES_DATA
+    }
+
+@app.get("/api/courses/{course_id}")
+def get_course_detail(course_id: str, key: str = Depends(verify_api_key)):
+    course = next((c for c in COURSES_DATA if c["id"] == course_id), None)
+    if not course:
+        raise HTTPException(status_code=404, detail=f"Course with ID '{course_id}' not found.")
+    return {
+        "status": "success",
+        "course": course
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
