@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useStudent } from '../context/StudentContext';
 import { 
   Sparkles, 
@@ -22,16 +22,20 @@ import {
   PenTool,
   Bot,
   Camera,
-  ShieldCheck,
-  Lock
+  LogOut,
+  LogIn,
+  School
 } from 'lucide-react';
 
 export const Navbar = () => {
   const location = useLocation();
-  const { student, stats } = useStudent();
+  const navigate = useNavigate();
+  const { student, teacher, stats, authRole, logout } = useStudent();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = [
+  const activeUser = authRole === 'teacher' ? teacher : student;
+
+  const studentLinks = [
     { label: 'Home', path: '/', icon: Compass },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'Productivity', path: '/productivity', icon: Brain },
@@ -40,13 +44,29 @@ export const Navbar = () => {
     { label: 'Reverse AI', path: '/reverse-classroom', icon: GraduationCap },
     { label: 'Textbook 3D', path: '/living-textbook', icon: BookOpen },
     { label: 'Whiteboard', path: '/whiteboard', icon: PenTool },
-    { label: 'Teacher', path: '/teacher', icon: ShieldCheck },
     { label: 'AI Tutor', path: '/ai-tutor', icon: Bot },
   ];
+
+  const teacherLinks = [
+    { label: 'Home', path: '/', icon: Compass },
+    { label: 'Teacher Hub', path: '/teacher-dashboard', icon: School },
+    { label: 'Whiteboard', path: '/whiteboard', icon: PenTool },
+    { label: 'Face Proctor', path: '/face-monitoring', icon: Camera },
+    { label: 'Assignments', path: '/assignments', icon: CheckSquare },
+    { label: 'Curriculum', path: '/courses', icon: BookOpen },
+    { label: 'AI Tutor', path: '/ai-tutor', icon: Bot },
+  ];
+
+  const navLinks = authRole === 'teacher' ? teacherLinks : studentLinks;
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -76,7 +96,7 @@ export const Navbar = () => {
 
           {/* Desktop Navigation Links */}
           <div className="hidden xl:flex items-center gap-1">
-            {navLinks.map((link) => {
+            {navLinks.slice(0, 8).map((link) => {
               const active = isActive(link.path);
               const Icon = link.icon;
               return (
@@ -97,48 +117,63 @@ export const Navbar = () => {
           </div>
 
           {/* Right Action / Telemetry Area */}
-          <div className="hidden sm:flex items-center gap-2.5">
-            {/* Teacher Protected Portal Pill */}
-            <Link
-              to="/teacher"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
-                isActive('/teacher')
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-neon-emerald'
-                  : 'bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10'
-              }`}
-              title="Teacher Portal (Protected: 12345678)"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Teacher Portal</span>
-              <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono">12345678</span>
-            </Link>
-            {/* Streak Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">
-              <Flame className="w-4 h-4 text-amber-400 fill-amber-400/30 animate-pulse" />
-              <span>{stats.streak}d Streak</span>
-            </div>
+          <div className="hidden sm:flex items-center gap-3">
+            {/* Streak Pill (for student) */}
+            {authRole === 'student' && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">
+                <Flame className="w-4 h-4 text-amber-400 fill-amber-400/30 animate-pulse" />
+                <span>{stats.streak}d Streak</span>
+              </div>
+            )}
 
-            {/* XP Pill */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-semibold">
-              <Zap className="w-4 h-4 text-purple-400 fill-purple-400/30" />
-              <span>{stats.xp.toLocaleString()} XP</span>
+            {/* Role Badge */}
+            <div className={`px-2.5 py-1 rounded-full text-[10px] font-mono uppercase font-bold tracking-wider ${
+              authRole === 'teacher'
+                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-neon-purple'
+                : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-neon-cyan'
+            }`}>
+              {authRole === 'teacher' ? 'Faculty Lead' : 'Student'}
             </div>
 
             {/* User Avatar & Level */}
-            <Link
-              to="/profile"
-              className="flex items-center gap-2.5 p-1 pl-2.5 pr-3 rounded-full glass-card border-indigo-500/30 hover:border-cyan-500/50 transition-all duration-300"
-            >
-              <div className="flex flex-col text-right">
-                <span className="text-xs font-bold text-white leading-tight">{student.name}</span>
-                <span className="text-[10px] text-cyan-400 font-mono leading-tight">LVL {student.level}</span>
-              </div>
-              <img
-                src={student.avatar}
-                alt={student.name}
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-cyan-500/40"
-              />
-            </Link>
+            {authRole ? (
+              <Link
+                to={authRole === 'teacher' ? '/teacher-dashboard' : '/profile'}
+                className="flex items-center gap-2.5 p-1 pl-2.5 pr-3 rounded-full glass-card border-indigo-500/30 hover:border-cyan-500/50 transition-all duration-300"
+              >
+                <div className="flex flex-col text-right">
+                  <span className="text-xs font-bold text-white leading-tight truncate max-w-[110px]">{activeUser.name}</span>
+                  <span className="text-[10px] text-cyan-400 font-mono leading-tight">
+                    {authRole === 'teacher' ? 'FACULTY' : `LVL ${student.level}`}
+                  </span>
+                </div>
+                <img
+                  src={activeUser.avatar}
+                  alt={activeUser.name}
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-cyan-500/40"
+                />
+              </Link>
+            ) : null}
+
+            {/* Login / Logout Button */}
+            {authRole ? (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono text-slate-300 hover:text-rose-300 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/30 transition-all cursor-pointer"
+                title="Log out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Login</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Toggle Button */}
@@ -155,7 +190,7 @@ export const Navbar = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-indigo-900/30 bg-[#050818]/95 backdrop-blur-2xl px-4 pt-3 pb-6 flex flex-col gap-2">
+        <div className="lg:hidden border-b border-indigo-900/40 bg-[#050818]/95 backdrop-blur-2xl px-4 pt-3 pb-6 flex flex-col gap-2">
           {navLinks.map((link) => {
             const active = isActive(link.path);
             const Icon = link.icon;
@@ -164,17 +199,41 @@ export const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium ${
+                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-semibold ${
                   active
-                    ? 'text-cyan-300 bg-cyan-500/15 border border-cyan-500/30'
+                    ? 'text-cyan-300 bg-cyan-500/15 border border-cyan-500/40'
                     : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
-                {link.label}
+                <Icon className="w-4 h-4 text-cyan-400" />
+                <span>{link.label}</span>
               </Link>
             );
           })}
+          
+          <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+            {authRole ? (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-rose-300 bg-rose-500/10 border border-rose-500/30 flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout ({activeUser.name})</span>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center gap-2"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Login</span>
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </nav>

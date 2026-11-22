@@ -18,7 +18,8 @@ import { ReverseClassroom } from './pages/ReverseClassroom';
 import { LivingTextbook } from './pages/LivingTextbook';
 import { ProductivityHub } from './pages/ProductivityHub';
 import { FaceMonitoringMode } from './pages/FaceMonitoringMode';
-import { TeacherPortal } from './pages/TeacherPortal';
+import { Login } from './pages/Login';
+import { TeacherDashboard } from './pages/TeacherDashboard';
 import { AiCompanionModal } from './components/companion/AiCompanionModal';
 import { Modal } from './components/Modal';
 import { useStudent } from './context/StudentContext';
@@ -26,7 +27,7 @@ import { useStudent } from './context/StudentContext';
 export const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { addTask } = useStudent();
+  const { addTask, authRole } = useStudent();
   const [quickTaskModalOpen, setQuickTaskModalOpen] = useState(false);
 
   const [quickTaskTitle, setQuickTaskTitle] = useState('');
@@ -34,6 +35,7 @@ export const App = () => {
   const [quickTaskDay, setQuickTaskDay] = useState('Monday');
 
   const isHome = location.pathname === '/';
+  const isLogin = location.pathname === '/login';
   const isWhiteboard = location.pathname === '/whiteboard';
   const isUniverse = location.pathname === '/universe';
   const isImmersiveFullPage = isWhiteboard || isUniverse;
@@ -68,6 +70,12 @@ export const App = () => {
             <Route path="/" element={<Home />} />
           </Routes>
         </main>
+      ) : isLogin ? (
+        <main className="flex-1 flex items-center justify-center">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </main>
       ) : isImmersiveFullPage ? (
         <main className="flex-1 w-full flex flex-col">
           <Routes>
@@ -84,14 +92,13 @@ export const App = () => {
           <main className="flex-1 min-w-0 flex flex-col">
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
               <Route path="/productivity" element={<ProductivityHub />} />
               <Route path="/face-monitoring" element={<FaceMonitoringMode />} />
               <Route path="/universe" element={<Universe />} />
               <Route path="/reverse-classroom" element={<ReverseClassroom />} />
               <Route path="/living-textbook" element={<LivingTextbook />} />
               <Route path="/whiteboard" element={<TeacherWhiteboard />} />
-              <Route path="/teacher" element={<TeacherPortal />} />
-              <Route path="/teacher-portal" element={<TeacherPortal />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/planner" element={<StudyPlanner />} />
               <Route path="/assignments" element={<Assignments />} />
@@ -105,7 +112,7 @@ export const App = () => {
       )}
 
       {/* Universal Footer (hidden in immersive views for maximal canvas view) */}
-      {!isImmersiveFullPage && <Footer />}
+      {!isImmersiveFullPage && !isLogin && <Footer />}
 
       {/* Global 3D AI Companion Dock & Modal */}
       <AiCompanionModal />

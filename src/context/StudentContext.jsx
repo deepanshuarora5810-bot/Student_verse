@@ -21,9 +21,34 @@ import {
   WORKLOAD_HEATMAP_DATA
 } from '../data/demoData';
 
+const INITIAL_TEACHER = {
+  name: "Prof. Marcus Vance",
+  handle: "@marcus_vance",
+  email: "marcus.vance@studentverse.edu",
+  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+  title: "Faculty Lead & Research Chair",
+  department: "Quantum Computing & Neural Systems",
+  university: "Neo-Kyoto Institute of Advanced Technology",
+  level: 12,
+  activeClassroomCode: "SV-ROOM-4029",
+  totalStudents: 248,
+  activeSessions: 3,
+  pendingReviews: 14
+};
+
 const StudentContext = createContext(null);
 
 export const StudentProvider = ({ children }) => {
+  // Authentication Role State ('student' | 'teacher' | null)
+  const [authRole, setAuthRole] = useState(() => {
+    return localStorage.getItem('sv_auth_role') || 'student';
+  });
+
+  const [teacher, setTeacher] = useState(() => {
+    const saved = localStorage.getItem('sv_teacher');
+    return saved ? JSON.parse(saved) : INITIAL_TEACHER;
+  });
+
   // Load initial data from localStorage if available
   const [student, setStudent] = useState(() => {
     const saved = localStorage.getItem('sv_student');
@@ -738,9 +763,41 @@ export const StudentProvider = ({ children }) => {
     : 0;
   const spacedTopicsDueCount = revisions.filter((r) => r.dueToday).length;
 
+  const login = (role, password) => {
+    if (role === 'student') {
+      if (password === '1234') {
+        setAuthRole('student');
+        localStorage.setItem('sv_auth_role', 'student');
+        addToast('Welcome back, Alex Mercer! Logged in as Student.', 'success');
+        return { success: true, role: 'student', redirect: '/dashboard' };
+      }
+      return { success: false, error: 'Invalid password. Please try again.' };
+    } else if (role === 'teacher') {
+      if (password === '0987') {
+        setAuthRole('teacher');
+        localStorage.setItem('sv_auth_role', 'teacher');
+        addToast('Welcome back, Prof. Marcus Vance! Logged in as Teacher.', 'success');
+        return { success: true, role: 'teacher', redirect: '/teacher-dashboard' };
+      }
+      return { success: false, error: 'Invalid password. Please try again.' };
+    }
+    return { success: false, error: 'Please select a valid role.' };
+  };
+
+  const logout = () => {
+    setAuthRole(null);
+    localStorage.removeItem('sv_auth_role');
+    addToast('Logged out successfully.', 'info');
+    return true;
+  };
+
   return (
     <StudentContext.Provider
       value={{
+        authRole,
+        teacher,
+        login,
+        logout,
         student,
         skills,
         courses,
