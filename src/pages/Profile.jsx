@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStudent } from '../context/StudentContext';
 import { Modal } from '../components/Modal';
-import { NeuralSkills3DPieChart } from '../components/NeuralSkills3DPieChart';
+import { NeuralSkillsPieChart } from '../components/NeuralSkillsPieChart';
 import {
   User,
   Mail,
@@ -180,8 +180,8 @@ export const Profile = () => {
         </div>
       </div>
 
-      {/* 3D NEURAL SKILLS PIE CHART MATRIX */}
-      <NeuralSkills3DPieChart
+      {/* NEURAL SKILLS PIE CHART MATRIX (2D PIE CHART) */}
+      <NeuralSkillsPieChart
         skills={skills}
         onBoostSkill={handleBoostSkill}
         onCalibrate={() => {
