@@ -41,7 +41,7 @@ const StudentContext = createContext(null);
 export const StudentProvider = ({ children }) => {
   // Authentication Role State ('student' | 'teacher' | null)
   const [authRole, setAuthRole] = useState(() => {
-    return localStorage.getItem('sv_auth_role') || 'student';
+    return localStorage.getItem('sv_auth_role') || null;
   });
 
   const [teacher, setTeacher] = useState(() => {

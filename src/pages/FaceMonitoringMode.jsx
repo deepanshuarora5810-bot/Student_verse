@@ -790,24 +790,37 @@ export const FaceMonitoringMode = () => {
                     <span className="text-xs font-mono uppercase text-cyan-400 font-bold flex items-center gap-1.5">
                       <Eye className="w-4 h-4" /> Live Proctor Feed
                     </span>
-                    <button
-                      onClick={() => setFeedMode((prev) => (prev === 'webcam' ? 'hologram' : 'webcam'))}
-                      className="px-2 py-0.5 rounded-md text-[10px] font-mono text-slate-400 hover:text-white bg-white/5 border border-white/10"
-                    >
-                      {feedMode === 'webcam' ? 'Hologram Mode' : 'Webcam Mode'}
-                    </button>
                   </div>
-                  <div className="flex items-center gap-2">
+                  
+                  {/* Feed Mode Switcher */}
+                  <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-white/10">
+                    <button
+                      onClick={() => setFeedMode('webcam')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold transition-all ${
+                        feedMode === 'webcam'
+                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-neon-cyan'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      Webcam Feed
+                    </button>
+                    <button
+                      onClick={() => setFeedMode('hologram')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold transition-all ${
+                        feedMode === 'hologram'
+                          ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-neon-purple'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      AI Mesh
+                    </button>
                     <button
                       onClick={handleReconnectCamera}
                       title="Re-sync camera feed"
-                      className="p-1 rounded-lg text-slate-400 hover:text-white bg-white/5 hover:bg-white/10"
+                      className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors ml-1"
                     >
-                      <RefreshCw className="w-3.5 h-3.5" />
+                      <RefreshCw className="w-3 h-3" />
                     </button>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
-                      1 Candidate
-                    </span>
                   </div>
                 </div>
 
