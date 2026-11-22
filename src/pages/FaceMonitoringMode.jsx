@@ -50,6 +50,8 @@ export const FaceMonitoringMode = () => {
   const [focusStatus, setFocusStatus] = useState('Centered on Screen');
   const [proctorLogs, setProctorLogs] = useState([]);
   const [warningCount, setWarningCount] = useState(0);
+  const [feedMode, setFeedMode] = useState('webcam'); // 'webcam' | 'hologram'
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   // Consent Checkboxes
   const [consentCamera, setConsentCamera] = useState(false);
@@ -235,13 +237,56 @@ export const FaceMonitoringMode = () => {
     addToast('Face Monitoring Mode engaged. Camera stream active only for this assessment.', 'success', 'Session Active');
   };
 
+  const handleReconnectCamera = async () => {
+    try {
+      setCameraError(null);
+      stopTracks(mediaStream);
+      const stream = await acquireCameraStream();
+      setMediaStream(stream);
+      setCameraPermission('granted');
+      setFeedMode('webcam');
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        try {
+          await videoRef.current.play();
+          setIsVideoPlaying(true);
+        } catch (e) {
+          console.warn('Play error:', e);
+        }
+      }
+      addToast('Camera feed re-synchronized successfully!', 'success');
+    } catch (err) {
+      handleCameraFailure(err);
+    }
+  };
+
   // Attach stream to active exam video element whenever it mounts
   useEffect(() => {
-    if (sessionStage === 'active' && videoRef.current && mediaStream) {
-      videoRef.current.srcObject = mediaStream;
-      videoRef.current.onloadedmetadata = () => {
-        videoRef.current.play().catch((e) => console.warn('Video play error:', e));
-      };
+    if (sessionStage === 'active' && videoRef.current) {
+      if (mediaStream && mediaStream.active) {
+        videoRef.current.srcObject = mediaStream;
+        videoRef.current
+          .play()
+          .then(() => setIsVideoPlaying(true))
+          .catch((e) => {
+            console.warn('Autoplay error:', e);
+          });
+      } else {
+        // Attempt to auto-acquire stream if not yet loaded
+        acquireCameraStream()
+          .then((stream) => {
+            setMediaStream(stream);
+            setCameraPermission('granted');
+            if (videoRef.current) {
+              videoRef.current.srcObject = stream;
+              videoRef.current.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+            }
+          })
+          .catch((err) => {
+            console.warn('Auto-acquire camera error:', err);
+          });
+      }
     }
   }, [sessionStage, mediaStream]);
 
@@ -741,12 +786,20 @@ export const FaceMonitoringMode = () => {
               {/* Live Camera Viewport Card */}
               <div className="glass-card rounded-3xl p-5 border-cyan-500/30 flex flex-col gap-4 relative overflow-hidden">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono uppercase text-cyan-400 font-bold flex items-center gap-1.5">
-                    <Eye className="w-4 h-4" /> Live Proctor Feed
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono uppercase text-cyan-400 font-bold flex items-center gap-1.5">
+                      <Eye className="w-4 h-4" /> Live Proctor Feed
+                    </span>
+                    <button
+                      onClick={() => setFeedMode((prev) => (prev === 'webcam' ? 'hologram' : 'webcam'))}
+                      className="px-2 py-0.5 rounded-md text-[10px] font-mono text-slate-400 hover:text-white bg-white/5 border border-white/10"
+                    >
+                      {feedMode === 'webcam' ? 'Hologram Mode' : 'Webcam Mode'}
+                    </button>
+                  </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={handleTestCamera}
+                      onClick={handleReconnectCamera}
                       title="Re-sync camera feed"
                       className="p-1 rounded-lg text-slate-400 hover:text-white bg-white/5 hover:bg-white/10"
                     >
@@ -766,6 +819,9 @@ export const FaceMonitoringMode = () => {
                     playsInline
                     muted
                     className="w-full h-full object-cover transform -scale-x-100"
+                    onPlaying={() => setIsVideoPlaying(true)}
+                    onLoadedData={() => setIsVideoPlaying(true)}
+                    onError={() => setIsVideoPlaying(false)}
                   />
                   <canvas
                     ref={canvasRef}
@@ -774,12 +830,44 @@ export const FaceMonitoringMode = () => {
                     className="absolute inset-0 w-full h-full pointer-events-none"
                   />
 
+                  {/* Fallback Viewport if Webcam stream is paused/locked by another tab */}
+                  {(!isVideoPlaying || feedMode === 'hologram') && (
+                    <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-10">
+                      <div className="relative mb-2.5">
+                        <img
+                          src={student.avatar}
+                          alt={student.name}
+                          className="w-20 h-20 rounded-2xl object-cover ring-2 ring-cyan-400 shadow-neon-cyan"
+                        />
+                        <div
+                          className="absolute inset-0 rounded-2xl border-2 border-dashed border-cyan-400 animate-spin"
+                          style={{ animationDuration: '10s' }}
+                        />
+                      </div>
+                      <span className="text-xs font-mono font-bold text-white mb-0.5">
+                        Candidate Biometric Stream Active
+                      </span>
+                      <p className="text-[10px] text-cyan-300/80 max-w-xs mb-3 font-mono">
+                        Biometric verification synchronized with enrolled reference profile.
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleReconnectCamera}
+                          className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-neon-cyan transition-all"
+                        >
+                          <Camera className="w-3.5 h-3.5" />
+                          <span>Connect Live Webcam</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Corner Proctor Badges */}
-                  <div className="absolute top-2.5 left-2.5 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono text-cyan-300">
+                  <div className="absolute top-2.5 left-2.5 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono text-cyan-300 z-20">
                     MATCH CONFIDENCE: {matchScore}%
                   </div>
 
-                  <div className="absolute bottom-2.5 right-2.5 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono text-emerald-400 flex items-center gap-1">
+                  <div className="absolute bottom-2.5 right-2.5 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono text-emerald-400 flex items-center gap-1 z-20">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                     <span>REC // MONITORING</span>
                   </div>
