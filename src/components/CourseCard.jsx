@@ -71,17 +71,21 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
     updateCourseProgress(course.id, course.progress + 15);
   };
 
-  // Navigate to external content page on clicking Continue for Quantum Computing
+  // Navigate to external content page on clicking Continue for courses
   const handleContinue = (e) => {
     e.stopPropagation();
-    const isQuantum =
-      course.id === 'crs-101' ||
-      course.title.toLowerCase().includes('quantum') ||
-      course.category.toLowerCase().includes('quantum');
 
-    const targetUrl =
-      course.externalUrl ||
-      (isQuantum ? 'https://en.wikipedia.org/wiki/Quantum_computing' : null);
+    let targetUrl = course.externalUrl;
+    if (!targetUrl) {
+      const titleLower = course.title.toLowerCase();
+      if (course.id === 'crs-101' || titleLower.includes('quantum')) {
+        targetUrl = 'https://en.wikipedia.org/wiki/Quantum_computing';
+      } else if (course.id === 'crs-102' || titleLower.includes('neural') || titleLower.includes('transformer')) {
+        targetUrl = 'https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)';
+      } else if (course.id === 'crs-103' || titleLower.includes('webgl') || titleLower.includes('shader')) {
+        targetUrl = 'https://thebookofshaders.com/';
+      }
+    }
 
     if (targetUrl) {
       addToast(`Navigating to ${course.title} external learning portal...`, 'info');
@@ -112,7 +116,7 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
           api_key: trimmed
         })
       });
-    } catch (e) {}
+    } catch (e) { }
 
     const newCfg = {
       apiKey: trimmed,
@@ -217,7 +221,7 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
         const parsed = JSON.parse(saved);
         if (parsed.length > 0) return parsed[0].key;
       }
-    } catch (e) {}
+    } catch (e) { }
     return 'sv_live_crs_48b1c099e2df9845';
   })();
 
@@ -360,17 +364,11 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
                   <button
                     onClick={handleContinue}
                     className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 transition-all cursor-pointer shadow-neon-cyan group/btn"
-                    title={
-                      course.id === 'crs-101' || course.title.toLowerCase().includes('quantum')
-                        ? 'Navigate to external Quantum Computing content & documentation'
-                        : 'Continue course'
-                    }
+                    title={`Navigate to external ${course.title} content & documentation`}
                   >
                     <Play className="w-3.5 h-3.5 fill-cyan-400 group-hover/btn:scale-110 transition-transform" />
                     <span>Continue</span>
-                    {(course.id === 'crs-101' || course.title.toLowerCase().includes('quantum') || course.externalUrl) && (
-                      <ExternalLink className="w-3 h-3 text-cyan-400 group-hover/btn:translate-x-0.5 transition-transform" />
-                    )}
+                    <ExternalLink className="w-3 h-3 text-cyan-400 group-hover/btn:translate-x-0.5 transition-transform" />
                   </button>
                   <button
                     onClick={handleAdvanceProgress}
@@ -404,7 +402,7 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
         maxWidth="max-w-2xl"
       >
         <div className="flex flex-col gap-5">
-          
+
           {/* Header Banner */}
           <div className="p-4 rounded-2xl bg-slate-900/90 border border-cyan-500/30 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -433,11 +431,10 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
           <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
             <button
               onClick={() => setCourseApiTab('interactive_ai')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
-                courseApiTab === 'interactive_ai'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${courseApiTab === 'interactive_ai'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                : 'text-slate-400 hover:text-white'
+                }`}
             >
               <Bot className="w-3.5 h-3.5" />
               <span>Ask Course AI</span>
@@ -445,11 +442,10 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
 
             <button
               onClick={() => setCourseApiTab('endpoint_curl')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
-                courseApiTab === 'endpoint_curl'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${courseApiTab === 'endpoint_curl'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                : 'text-slate-400 hover:text-white'
+                }`}
             >
               <Terminal className="w-3.5 h-3.5" />
               <span>cURL & Endpoints</span>
@@ -457,11 +453,10 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
 
             <button
               onClick={() => setCourseApiTab('key_setup')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
-                courseApiTab === 'key_setup'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${courseApiTab === 'key_setup'
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                : 'text-slate-400 hover:text-white'
+                }`}
             >
               <Key className="w-3.5 h-3.5" />
               <span>Insert / Change Key</span>
@@ -570,22 +565,20 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
                   <button
                     type="button"
                     onClick={() => setInlineProvider('gemini')}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all ${
-                      inlineProvider === 'gemini'
-                        ? 'bg-blue-500/20 text-blue-300 border border-blue-400/40'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all ${inlineProvider === 'gemini'
+                      ? 'bg-blue-500/20 text-blue-300 border border-blue-400/40'
+                      : 'text-slate-400 hover:text-white'
+                      }`}
                   >
                     Google Gemini
                   </button>
                   <button
                     type="button"
                     onClick={() => setInlineProvider('openai')}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all ${
-                      inlineProvider === 'openai'
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all ${inlineProvider === 'openai'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
+                      : 'text-slate-400 hover:text-white'
+                      }`}
                   >
                     OpenAI GPT
                   </button>
@@ -669,35 +662,49 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
           </p>
 
           {/* External Authoritative Content Card */}
-          {(course.externalUrl || course.id === 'crs-101' || course.title.toLowerCase().includes('quantum')) && (
-            <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-neon-cyan">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 shrink-0">
-                  <ExternalLink className="w-4 h-4" />
+          {(() => {
+            const externalLink =
+              course.externalUrl ||
+              (course.id === 'crs-101'
+                ? 'https://en.wikipedia.org/wiki/Quantum_computing'
+                : course.id === 'crs-102'
+                ? 'https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)'
+                : course.id === 'crs-103'
+                ? 'https://thebookofshaders.com/'
+                : null);
+
+            if (!externalLink) return null;
+
+            return (
+              <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-neon-cyan">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 shrink-0">
+                    <ExternalLink className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <span>{course.title} • Official Knowledge Base</span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                        Live Reference
+                      </span>
+                    </h5>
+                    <p className="text-[11px] text-slate-300 mt-0.5">
+                      Authoritative documentation, code specifications & interactive tutorials.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h5 className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <span>External Course Knowledge Base</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                      Live Reference
-                    </span>
-                  </h5>
-                  <p className="text-[11px] text-slate-300 mt-0.5">
-                    Authoritative theoretical principles, qubit state vectors & physical realizations.
-                  </p>
-                </div>
+                <a
+                  href={externalLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition-all flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
+                >
+                  <span>Open External Content</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
               </div>
-              <a
-                href={course.externalUrl || 'https://en.wikipedia.org/wiki/Quantum_computing'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition-all flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
-              >
-                <span>Open External Content</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          )}
+            );
+          })()}
 
           <div>
             <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
@@ -713,19 +720,17 @@ export const CourseCard = ({ course, onOpenKeyModal, aiConfig: propAiConfig }) =
                     setActiveLesson(lesson);
                     setLessonAiReply(null);
                   }}
-                  className={`p-3.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer ${
-                    activeLesson?.id === lesson.id
-                      ? 'bg-cyan-500/15 border-cyan-400/50'
-                      : 'bg-white/5 border-white/10 hover:bg-white/10'
-                  }`}
+                  className={`p-3.5 rounded-xl border flex items-center justify-between transition-all cursor-pointer ${activeLesson?.id === lesson.id
+                    ? 'bg-cyan-500/15 border-cyan-400/50'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono font-bold ${
-                        lesson.completed
-                          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-slate-800 text-slate-400'
-                      }`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono font-bold ${lesson.completed
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-800 text-slate-400'
+                        }`}
                     >
                       {lesson.completed ? '✓' : lesson.id}
                     </div>

@@ -88,6 +88,12 @@ export const INITIAL_COURSES = [
     level: "Intermediate",
     enrolled: true,
     progress: 65,
+    externalUrl: "https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)",
+    externalResources: [
+      { name: "Wikipedia: Transformer Deep Learning Architecture", url: "https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)" },
+      { name: "The Illustrated Transformer (Jay Alammar)", url: "https://jalammar.github.io/illustrated-transformer/" },
+      { name: "Hugging Face Transformers Docs", url: "https://huggingface.co/docs/transformers" }
+    ],
     description: "Deep dive into attention mechanisms, multi-head transformer models, diffusion architectures, and model quantization.",
     color: "from-purple-500 to-indigo-600",
     glowColor: "rgba(168, 85, 247, 0.4)",
@@ -120,6 +126,12 @@ export const INITIAL_COURSES = [
     level: "Advanced",
     enrolled: true,
     progress: 90,
+    externalUrl: "https://thebookofshaders.com/",
+    externalResources: [
+      { name: "The Book of Shaders (Interactive GLSL Guide)", url: "https://thebookofshaders.com/" },
+      { name: "Three.js Official Documentation", url: "https://threejs.org/docs/" },
+      { name: "Wikipedia: WebGL Specification", url: "https://en.wikipedia.org/wiki/WebGL" }
+    ],
     description: "Create breathtaking interactive 3D web experiences using Three.js, GLSL fragment shaders, raymarching, and post-processing.",
     color: "from-emerald-500 to-teal-600",
     glowColor: "rgba(16, 185, 129, 0.4)",
