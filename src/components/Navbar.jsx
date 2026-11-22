@@ -21,7 +21,9 @@ import {
   Video,
   PenTool,
   Bot,
-  Camera
+  Camera,
+  ShieldCheck,
+  Lock
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -38,6 +40,7 @@ export const Navbar = () => {
     { label: 'Reverse AI', path: '/reverse-classroom', icon: GraduationCap },
     { label: 'Textbook 3D', path: '/living-textbook', icon: BookOpen },
     { label: 'Whiteboard', path: '/whiteboard', icon: PenTool },
+    { label: 'Teacher', path: '/teacher', icon: ShieldCheck },
     { label: 'AI Tutor', path: '/ai-tutor', icon: Bot },
   ];
 
@@ -73,7 +76,7 @@ export const Navbar = () => {
 
           {/* Desktop Navigation Links */}
           <div className="hidden xl:flex items-center gap-1">
-            {navLinks.slice(0, 8).map((link) => {
+            {navLinks.map((link) => {
               const active = isActive(link.path);
               const Icon = link.icon;
               return (
@@ -94,7 +97,21 @@ export const Navbar = () => {
           </div>
 
           {/* Right Action / Telemetry Area */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2.5">
+            {/* Teacher Protected Portal Pill */}
+            <Link
+              to="/teacher"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
+                isActive('/teacher')
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-neon-emerald'
+                  : 'bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10'
+              }`}
+              title="Teacher Portal (Protected: 12345678)"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Teacher Portal</span>
+              <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono">12345678</span>
+            </Link>
             {/* Streak Pill */}
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">
               <Flame className="w-4 h-4 text-amber-400 fill-amber-400/30 animate-pulse" />

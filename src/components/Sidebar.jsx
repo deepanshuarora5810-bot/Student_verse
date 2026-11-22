@@ -17,7 +17,8 @@ import {
   User,
   PlusCircle,
   Bot,
-  Camera
+  Camera,
+  ShieldCheck
 } from 'lucide-react';
 
 export const Sidebar = ({ onQuickTaskClick }) => {
@@ -31,6 +32,7 @@ export const Sidebar = ({ onQuickTaskClick }) => {
     { label: 'Reverse AI Student', path: '/reverse-classroom', icon: GraduationCap, highlight: true },
     { label: 'Living 3D Textbook', path: '/living-textbook', icon: BookOpen, highlight: true },
     { label: 'Teacher Whiteboard', path: '/whiteboard', icon: PenTool },
+    { label: 'Teacher Portal (12345678)', path: '/teacher', icon: ShieldCheck, highlight: true, badge: 'Protected' },
     { label: 'My Courses', path: '/courses', icon: BookOpen, badge: stats.enrolledCount },
     { label: 'Study Planner', path: '/planner', icon: Calendar, badge: stats.totalTasksCount - stats.completedTasksCount },
     { label: 'Assignments', path: '/assignments', icon: CheckSquare, badge: stats.pendingAssignmentsCount },
