@@ -49,6 +49,12 @@ export const INITIAL_COURSES = [
     level: "Advanced",
     enrolled: true,
     progress: 82,
+    externalUrl: "https://en.wikipedia.org/wiki/Quantum_computing",
+    externalResources: [
+      { name: "Wikipedia: Quantum Computing", url: "https://en.wikipedia.org/wiki/Quantum_computing" },
+      { name: "IBM Quantum Learning Hub", url: "https://learning.quantum.ibm.com/" },
+      { name: "Qiskit Quantum SDK", url: "https://qiskit.org/" }
+    ],
     description: "Master superposition, quantum entanglement, Shor's algorithm, and quantum circuit simulations using modern SDKs.",
     color: "from-cyan-500 to-blue-600",
     glowColor: "rgba(6, 182, 212, 0.4)",
