@@ -149,7 +149,7 @@ export const App = () => {
               <Route
                 path="/dashboard"
                 element={
-                  <ProtectedRoute allowedRoles={['student']}>
+                  <ProtectedRoute allowedRoles={['student', 'teacher']}>
                     <Dashboard />
                   </ProtectedRoute>
                 }
@@ -245,7 +245,7 @@ export const App = () => {
               <Route
                 path="/profile"
                 element={
-                  <ProtectedRoute allowedRoles={['student']}>
+                  <ProtectedRoute allowedRoles={['student', 'teacher']}>
                     <Profile />
                   </ProtectedRoute>
                 }
