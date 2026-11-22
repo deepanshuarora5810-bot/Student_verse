@@ -20,7 +20,8 @@ import {
   Brain,
   Video,
   PenTool,
-  Bot
+  Bot,
+  Camera
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -32,6 +33,7 @@ export const Navbar = () => {
     { label: 'Home', path: '/', icon: Compass },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'Productivity', path: '/productivity', icon: Brain },
+    { label: 'Face Monitor', path: '/face-monitoring', icon: Camera },
     { label: '3D Universe', path: '/universe', icon: Globe },
     { label: 'Reverse AI', path: '/reverse-classroom', icon: GraduationCap },
     { label: 'Textbook 3D', path: '/living-textbook', icon: BookOpen },

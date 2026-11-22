@@ -41,7 +41,8 @@ import {
   ListTodo,
   CheckSquare,
   Users,
-  Repeat
+  Repeat,
+  Camera
 } from 'lucide-react';
 
 export const Dashboard = () => {
@@ -137,6 +138,14 @@ export const Dashboard = () => {
 
           {/* Quick Action Buttons */}
           <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/face-monitoring"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-cyan-200 hover:text-white bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 shadow-neon-cyan transition-all transform active:scale-95"
+            >
+              <Camera className="w-4 h-4 text-cyan-400" />
+              <span>Face Monitoring</span>
+            </Link>
+
             <Link
               to="/productivity"
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 shadow-neon-purple transition-all transform active:scale-95"
