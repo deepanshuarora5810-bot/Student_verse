@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStudent } from '../context/StudentContext';
 import { Modal } from '../components/Modal';
+import { NeuralSkills3DPieChart } from '../components/NeuralSkills3DPieChart';
 import {
   User,
   Mail,
@@ -179,68 +180,15 @@ export const Profile = () => {
         </div>
       </div>
 
-      {/* SKILLS PROFICIENCY MATRIX */}
-      <div className="glass-card rounded-3xl p-6 sm:p-8 border-indigo-500/30">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase text-cyan-400 font-semibold mb-1">
-              <Sparkles className="w-4 h-4" />
-              <span>Cognitive Capabilities</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-bold font-display text-white">
-              Neural Skills Matrix
-            </h2>
-          </div>
-
-          <button
-            onClick={() => {
-              addXP(100);
-              addToast('All skills refreshed and calibrated to standard grid.', 'info', 'Calibration Complete');
-            }}
-            className="text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Calibrate Matrix</span>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {skills.map((skill, index) => (
-            <div
-              key={index}
-              className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                  <h4 className="text-sm font-semibold text-white">{skill.name}</h4>
-                </div>
-                <span className="text-xs font-mono font-bold text-cyan-300">
-                  {skill.level}%
-                </span>
-              </div>
-
-              {/* Progress bar */}
-              <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden my-2">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-500"
-                  style={{ width: `${skill.level}%` }}
-                />
-              </div>
-
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 text-[11px] font-mono">
-                <span className="text-slate-400">{skill.category}</span>
-                <button
-                  onClick={() => handleBoostSkill(skill.name)}
-                  className="text-purple-300 hover:text-purple-200 transition-colors font-semibold"
-                >
-                  + Practice Drill
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* 3D NEURAL SKILLS PIE CHART MATRIX */}
+      <NeuralSkills3DPieChart
+        skills={skills}
+        onBoostSkill={handleBoostSkill}
+        onCalibrate={() => {
+          addXP(100);
+          addToast('All skills refreshed and calibrated to standard grid.', 'info', 'Calibration Complete');
+        }}
+      />
 
       {/* MODAL: EDIT PROFILE */}
       <Modal
