@@ -24,8 +24,7 @@ import {
   Camera,
   LogOut,
   LogIn,
-  School,
-  Scale
+  School
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -39,7 +38,6 @@ export const Navbar = () => {
   const studentLinks = [
     { label: 'Home', path: '/', icon: Compass },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'AnswerIQ', path: '/answer-iq', icon: Scale },
     { label: 'Productivity', path: '/productivity', icon: Brain },
     { label: 'Face Monitor', path: '/face-monitoring', icon: Camera },
     { label: '3D Universe', path: '/universe', icon: Globe },
@@ -52,7 +50,6 @@ export const Navbar = () => {
   const teacherLinks = [
     { label: 'Home', path: '/', icon: Compass },
     { label: 'Teacher Hub', path: '/teacher-dashboard', icon: School },
-    { label: 'AnswerIQ', path: '/answer-iq', icon: Scale },
     { label: 'Whiteboard', path: '/whiteboard', icon: PenTool },
     { label: 'Face Proctor', path: '/face-monitoring', icon: Camera },
     { label: 'Assignments', path: '/assignments', icon: CheckSquare },

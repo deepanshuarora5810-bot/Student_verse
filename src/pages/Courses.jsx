@@ -27,7 +27,13 @@ import {
   Code2,
   Bot,
   Trash2,
-  ExternalLink
+  ExternalLink,
+  CheckSquare,
+  GraduationCap,
+  Camera,
+  PenTool,
+  Brain,
+  Compass
 } from 'lucide-react';
 
 const API_BASE_URL = 'http://localhost:8000';
@@ -509,6 +515,121 @@ export const Courses = () => {
 
       </div>
 
+      {/* CONNECTED LEARNING HUBS & QUICK PAGE NAVIGATION */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
+          <span className="flex items-center gap-1.5 uppercase font-bold text-cyan-300">
+            <Compass className="w-3.5 h-3.5" />
+            <span>Navigate Relevant Learning Hubs</span>
+          </span>
+          <span className="text-[11px] text-slate-500 hidden sm:inline">Connected to your enrolled modules</span>
+        </div>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {/* Link 1: Planner */}
+          <Link
+            to="/planner"
+            className="p-3.5 rounded-2xl glass-card border border-indigo-500/20 hover:border-cyan-500/50 hover:bg-cyan-500/10 transition-all flex flex-col justify-between group shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">Study Planner</h4>
+              <p className="text-[10px] text-slate-400 mt-0.5 truncate">Schedule course slots</p>
+            </div>
+          </Link>
+
+          {/* Link 2: Assignments */}
+          <Link
+            to="/assignments"
+            className="p-3.5 rounded-2xl glass-card border border-indigo-500/20 hover:border-purple-500/50 hover:bg-purple-500/10 transition-all flex flex-col justify-between group shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <CheckSquare className="w-4 h-4" />
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white group-hover:text-purple-300 transition-colors">Assignments</h4>
+              <p className="text-[10px] text-slate-400 mt-0.5 truncate">AI Auto-Grading & Labs</p>
+            </div>
+          </Link>
+
+          {/* Link 3: AI Tutor */}
+          <Link
+            to="/ai-tutor"
+            className="p-3.5 rounded-2xl glass-card border border-indigo-500/20 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all flex flex-col justify-between group shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Bot className="w-4 h-4" />
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white group-hover:text-blue-300 transition-colors">AI Neural Tutor</h4>
+              <p className="text-[10px] text-slate-400 mt-0.5 truncate">24/7 Course Q&A</p>
+            </div>
+          </Link>
+
+          {/* Link 4: Living 3D Textbook */}
+          <Link
+            to="/living-textbook"
+            className="p-3.5 rounded-2xl glass-card border border-indigo-500/20 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all flex flex-col justify-between group shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors">3D Textbook</h4>
+              <p className="text-[10px] text-slate-400 mt-0.5 truncate">Spatial chapter models</p>
+            </div>
+          </Link>
+
+          {/* Link 5: Face Proctor Mode */}
+          <Link
+            to="/face-monitoring"
+            className="p-3.5 rounded-2xl glass-card border border-indigo-500/20 hover:border-pink-500/50 hover:bg-pink-500/10 transition-all flex flex-col justify-between group shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Camera className="w-4 h-4" />
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white group-hover:text-pink-300 transition-colors">Face Proctor</h4>
+              <p className="text-[10px] text-slate-400 mt-0.5 truncate">Camera assessments</p>
+            </div>
+          </Link>
+
+          {/* Link 6: Productivity Suite */}
+          <Link
+            to="/productivity"
+            className="p-3.5 rounded-2xl glass-card border border-indigo-500/20 hover:border-amber-500/50 hover:bg-amber-500/10 transition-all flex flex-col justify-between group shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Brain className="w-4 h-4" />
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors">Productivity</h4>
+              <p className="text-[10px] text-slate-400 mt-0.5 truncate">Heatmap & deadlines</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
       {/* RESULTS COUNT & PAGINATION STATUS */}
       <div className="flex items-center justify-between text-xs font-mono text-slate-400 px-2">
         <span>
@@ -627,39 +748,109 @@ export const Courses = () => {
         </div>
       )}
 
-      {/* MOVE TO NEXT LEARNING SECTION BANNER */}
-      <div className="p-6 rounded-3xl glass-card border-indigo-500/30 bg-gradient-to-r from-cyan-950/30 via-[#070b22] to-purple-950/30 flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
-            <Calendar className="w-6 h-6" />
+      {/* MULTI-WORKSPACE RELEVANT PAGES NAVIGATION BANNER */}
+      <div className="p-6 sm:p-8 rounded-3xl glass-card border-indigo-500/30 bg-gradient-to-r from-cyan-950/40 via-[#070b22] to-purple-950/40 flex flex-col gap-6 mt-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+              <Compass className="w-6 h-6" />
+            </div>
+            <div>
+              <span className="text-[10px] font-mono uppercase text-cyan-400 tracking-wider font-semibold block">
+                CURRICULUM INTEGRATION ECOSYSTEM
+              </span>
+              <h3 className="text-xl font-bold text-white">
+                Navigate Connected Academic Workspaces
+              </h3>
+              <p className="text-xs text-slate-300 mt-0.5 max-w-xl">
+                Every course module seamlessly links to your study planner, automated assignment grader, AI tutor, and proctoring suites.
+              </p>
+            </div>
           </div>
-          <div>
-            <span className="text-[10px] font-mono uppercase text-cyan-400 tracking-wider font-semibold block">
-              NEXT CURRICULUM STEP
-            </span>
-            <h3 className="text-lg font-bold text-white">
-              Schedule Your Courses on the Study Planner
-            </h3>
-            <p className="text-xs text-slate-300 mt-0.5 max-w-lg">
-              Organize your enrolled courses into weekly time slots, track study targets, and set assignment milestones.
-            </p>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/planner"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all transform active:scale-95"
+            >
+              <span>Launch Study Planner</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <Link
-            to="/universe"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
-          >
-            <Globe className="w-4 h-4 text-cyan-400" />
-            <span>3D Universe</span>
-          </Link>
+        {/* 4 Connected Workspaces Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/planner"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all transform active:scale-95"
+            className="p-4 rounded-2xl bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/30 transition-all flex flex-col justify-between group"
           >
-            <span>Move to Next Page: Planner</span>
-            <ArrowRight className="w-4 h-4" />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold">1. Schedule</span>
+                <Calendar className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+              </div>
+              <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">Study Planner</h4>
+              <p className="text-xs text-slate-400 mt-1">Organize weekly slots, target hours & task deadlines.</p>
+            </div>
+            <div className="mt-4 flex items-center gap-1 text-xs font-mono text-cyan-400 group-hover:translate-x-1 transition-transform">
+              <span>Open Planner</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+          </Link>
+
+          <Link
+            to="/assignments"
+            className="p-4 rounded-2xl bg-white/5 hover:bg-purple-500/10 border border-white/10 hover:border-purple-500/30 transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono uppercase text-purple-400 font-bold">2. Evaluate</span>
+                <CheckSquare className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />
+              </div>
+              <h4 className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors">Assignments Hub</h4>
+              <p className="text-xs text-slate-400 mt-1">Submit labs, view requirements & get instant AI grading.</p>
+            </div>
+            <div className="mt-4 flex items-center gap-1 text-xs font-mono text-purple-400 group-hover:translate-x-1 transition-transform">
+              <span>Open Assignments</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+          </Link>
+
+          <Link
+            to="/ai-tutor"
+            className="p-4 rounded-2xl bg-white/5 hover:bg-blue-500/10 border border-white/10 hover:border-blue-500/30 transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono uppercase text-blue-400 font-bold">3. Neural Help</span>
+                <Bot className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
+              </div>
+              <h4 className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">AI Neural Tutor</h4>
+              <p className="text-xs text-slate-400 mt-1">Ask questions, debug equations & receive step-by-step guidance.</p>
+            </div>
+            <div className="mt-4 flex items-center gap-1 text-xs font-mono text-blue-400 group-hover:translate-x-1 transition-transform">
+              <span>Open AI Tutor</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+          </Link>
+
+          <Link
+            to="/face-monitoring"
+            className="p-4 rounded-2xl bg-white/5 hover:bg-pink-500/10 border border-white/10 hover:border-pink-500/30 transition-all flex flex-col justify-between group"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-mono uppercase text-pink-400 font-bold">4. Assessment</span>
+                <Camera className="w-4 h-4 text-pink-400 group-hover:scale-110 transition-transform" />
+              </div>
+              <h4 className="text-sm font-bold text-white group-hover:text-pink-300 transition-colors">Face Proctoring</h4>
+              <p className="text-xs text-slate-400 mt-1">Complete webcam-monitored exams with biometric security.</p>
+            </div>
+            <div className="mt-4 flex items-center gap-1 text-xs font-mono text-pink-400 group-hover:translate-x-1 transition-transform">
+              <span>Open Proctoring</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
           </Link>
         </div>
       </div>
