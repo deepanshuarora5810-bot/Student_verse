@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useStudent } from '../context/StudentContext';
 import { Modal } from '../components/Modal';
 import {
@@ -26,7 +27,8 @@ import {
   Plus,
   Send,
   Sliders,
-  BookOpen
+  BookOpen,
+  Camera
 } from 'lucide-react';
 import {
   AreaChart,
@@ -306,6 +308,42 @@ export const ProductivityHub = () => {
               <Plus className="w-4 h-4" />
               <span>Register Upcoming Exam</span>
             </button>
+          </div>
+
+          {/* FACE MONITORING MODE LAUNCH CARD */}
+          <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-cyan-900/30 via-indigo-950/40 to-purple-900/30 border border-cyan-500/30 flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-cyan-500/15 transition-all" />
+
+            <div className="flex items-start sm:items-center gap-4 relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center justify-center shrink-0 shadow-neon-cyan">
+                <Camera className="w-7 h-7" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 uppercase">
+                    Face Monitoring Mode
+                  </span>
+                  <span className="text-[11px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span>Camera & Biometric Verification</span>
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-white font-display">
+                  Start Proctored Assessment with Face Monitoring Mode
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 max-w-xl">
+                  Enforces academic integrity using live webcam face detection, real-time comparison with your candidate reference profile, and continuous focus attention tracking. The camera operates strictly during the active session.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/face-monitoring"
+              className="relative z-10 shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-neon-cyan transition-all transform active:scale-95"
+            >
+              <Camera className="w-4 h-4" />
+              <span>Launch Face Monitoring Mode</span>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

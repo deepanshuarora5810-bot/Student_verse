@@ -16,7 +16,8 @@ import {
   Trophy,
   User,
   PlusCircle,
-  Bot
+  Bot,
+  Camera
 } from 'lucide-react';
 
 export const Sidebar = ({ onQuickTaskClick }) => {
@@ -25,6 +26,7 @@ export const Sidebar = ({ onQuickTaskClick }) => {
   const links = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'Productivity Suite', path: '/productivity', icon: Brain, highlight: true, badge: stats.overdueTasksCount > 0 ? stats.overdueTasksCount : undefined },
+    { label: 'Face Monitoring Mode', path: '/face-monitoring', icon: Camera, highlight: true },
     { label: '3D Universe', path: '/universe', icon: Globe, highlight: true },
     { label: 'Reverse AI Student', path: '/reverse-classroom', icon: GraduationCap, highlight: true },
     { label: 'Living 3D Textbook', path: '/living-textbook', icon: BookOpen, highlight: true },

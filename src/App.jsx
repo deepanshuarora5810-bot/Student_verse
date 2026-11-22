@@ -17,6 +17,7 @@ import { Universe } from './pages/Universe';
 import { ReverseClassroom } from './pages/ReverseClassroom';
 import { LivingTextbook } from './pages/LivingTextbook';
 import { ProductivityHub } from './pages/ProductivityHub';
+import { FaceMonitoringMode } from './pages/FaceMonitoringMode';
 import { AiCompanionModal } from './components/companion/AiCompanionModal';
 import { Modal } from './components/Modal';
 import { useStudent } from './context/StudentContext';
@@ -83,6 +84,7 @@ export const App = () => {
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/productivity" element={<ProductivityHub />} />
+              <Route path="/face-monitoring" element={<FaceMonitoringMode />} />
               <Route path="/universe" element={<Universe />} />
               <Route path="/reverse-classroom" element={<ReverseClassroom />} />
               <Route path="/living-textbook" element={<LivingTextbook />} />
